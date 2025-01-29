@@ -17,7 +17,7 @@
 </script>
 
 
-<aside class="border-r border-zinc-900 h-screen p-4 w-60 shrink-0 flex flex-col gap-4">
+<aside class="border-r border-zinc-900 h-screen p-4 w-[200px] shrink-0 flex flex-col gap-4 overflow-auto">
     {#if !selected_note}
         <h1 class="text-3xl font-serif">Select a Note</h1>
     {:else}

@@ -26,10 +26,6 @@
     let accidental_start = is_accidental(range.low);
     let accidental_end = is_accidental(range.high);
 
-    
-    onMount(() => {
-        keys_div.scrollLeft = keys_div.scrollWidth;
-    })
 
     function handleNoteClick(note: Note) {
         selected = note;
@@ -46,6 +42,7 @@
     {#each naturals as n}
         <button 
             onclick={() => handleNoteClick(n)}
+            id={n}
             class="key white border border-zinc-800 flex items-end justify-center pb-4 shrink-0 rounded-b-lg shadow-md"
             class:highlighted={highlighted.includes(n)}
         >   
@@ -57,6 +54,7 @@
     >
         {#each accidentals as n}
             <button 
+                id={n}
                 onclick={() => handleNoteClick(n)}
                 class="key black border border-zinc-800 flex items-end justify-center pb-4 rounded-b-lg shadow-md"
                 class:highlighted={highlighted.includes(n)}
