@@ -55,7 +55,7 @@
         {/if}
     </div>
 
-    <div bind:this={keys_div} class="keys rounded-md shadow-inner shadow-zinc-500 relative flex justify-center overflow-auto p-4 scroll-smooth border-4 border-zinc-200"
+    <div bind:this={keys_div} class="keys rounded-md shadow-inner shadow-zinc-500 relative flex overflow-auto p-4 scroll-smooth border-4 border-zinc-200"
         class:accidental-end={accidental_end}
         class:accidental-start={accidental_start}
         class:selected
