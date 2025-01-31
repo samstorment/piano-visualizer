@@ -1,32 +1,33 @@
 <script lang="ts">
-	import { dispay_types, get_pitch, type Display, type Note, type NoteRange } from "$lib";
-	import { play_note } from "$lib/sound";
+	import { get_pitch, type Note, type NoteRange } from "$lib";
+	import { display_types, type Display, type Piano } from '$lib/piano.svelte';
+    import { play_note } from "$lib/sound";
 
     interface Props {
-        range: NoteRange,
-        selected_note?: Note,
-        display: Display,
-        highlighted: Note[]
+        piano: Piano
     }
 
-    let { 
-        selected_note, 
-        display = $bindable(),
-        highlighted
-    }: Props = $props();
+    let { piano = $bindable() }: Props = $props();
+
+    function display_change(display: Display) {
+        piano.display = display;
+        piano.highlighted_notes.forEach(n => {
+            play_note(n)
+        });
+    }
 </script>
 
 
-<aside class="border-r border-zinc-900 h-screen p-4 w-[200px] shrink-0 flex flex-col gap-4 overflow-auto">
-    {#if !selected_note}
+<aside class="sticky top-0 border-r border-zinc-900 h-dvh p-4 w-[200px] shrink-0 flex flex-col gap-4 overflow-auto">
+    {#if !piano.selected_note}
         <h1 class="text-3xl font-serif">Select a Note</h1>
     {:else}
-        <h1 class="text-3xl font-serif">{get_pitch(selected_note)}</h1>
+        <h1 class="text-3xl font-serif">{get_pitch(piano.selected_note)}</h1>
 
-        {#each dispay_types as dt}
+        {#each display_types as dt}
             <button 
-                onclick={() => { display = dt; }}
-                class:highlighted={display === dt}
+                onclick={() => display_change(dt)}
+                class:highlighted={piano.display === dt}
             >
                 {dt}
             </button>

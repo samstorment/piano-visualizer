@@ -1,74 +1,95 @@
 <script lang="ts">
-	import { get_notes, get_pitch, get_pitch_index, is_accidental, is_flat, is_natural, is_sharp, type Display, type Note, type NoteRange } from "$lib";
+	import { get_notes, get_pitch, get_pitch_index, is_accidental, is_flat, is_natural, is_sharp, type Note, type NoteRange } from "$lib";
+	import type { Display, Piano } from "$lib/piano.svelte";
+	import type { Rack } from "$lib/rack.svelte";
 	import { play_note } from "$lib/sound";
-	import { onMount } from "svelte";
 
     interface Props {
-        range?: NoteRange,
-        selected?: Note,
-        highlighted: Note[],
-        display: Display | undefined
+        rack: Rack,
+        piano: Piano
     }
 
     let { 
-        range = { low: 'A0', high: 'C8' },
-        selected = $bindable(),
-        highlighted,
-        display = $bindable()
+        piano = $bindable(), 
+        rack = $bindable() 
     }: Props = $props();
 
     let keys_div: HTMLDivElement;
 
-    let notes = $derived(get_notes(range).toArray());
+    let notes = $derived(get_notes(piano.range).toArray());
     let naturals = $derived(notes.filter(is_natural));
     let accidentals =  $derived(notes.filter(is_accidental));
 
-    let accidental_start = is_accidental(range.low);
-    let accidental_end = is_accidental(range.high);
+    let accidental_start = is_accidental(piano.range.low);
+    let accidental_end = is_accidental(piano.range.high);
 
+    let selected = $derived(rack.selected_id === piano.id);
 
     function handleNoteClick(note: Note) {
-        selected = note;
-        // highlighted.forEach(play_note);
-        play_note(note);
+        piano.selected_note = note;
+        rack.selected_id = piano.id;
+        piano.highlighted_notes.forEach(n => {
+            play_note(n)
+        });
     }
 
 </script>
 
-<div bind:this={keys_div} class="keys relative flex overflow-auto pb-4 scroll-smooth"
-    class:accidental-end={accidental_end}
-    class:accidental-start={accidental_start}
->
-    {#each naturals as n}
+<div>
+    <div class="flex mb-2 gap-2 items-center">
         <button 
-            onclick={() => handleNoteClick(n)}
-            id={n}
-            class="key white border border-zinc-800 flex items-end justify-center pb-4 shrink-0 rounded-b-lg shadow-md"
-            class:highlighted={highlighted.includes(n)}
-        >   
-            {get_pitch(n)}
+            class="flex-1 flex gap-2"
+            onclick={() => rack.selected_id = piano.id}
+            class:selected
+        >
+            <div class="dot rounded-full border-4 border-zinc-200 aspect-square w-7"></div>
+            <span class={{ 'text-zinc-500': !selected }}>{piano.selected_note} {piano.display}</span>
         </button>
-    {/each}
-    <div class="accidentals h-0 absolute flex"
-        class:has-first-key={accidental_start}
-    >
-        {#each accidentals as n}
+        {#if rack.pianos.length > 1}
             <button 
-                id={n}
-                onclick={() => handleNoteClick(n)}
-                class="key black border border-zinc-800 flex items-end justify-center pb-4 rounded-b-lg shadow-md"
-                class:highlighted={highlighted.includes(n)}
+                class="border-2 rounded px-2 border-zinc-300 ml-auto" 
+                onclick={() => rack.remove_piano(piano)}
             >
+                Delete
+            </button>
+        {/if}
+    </div>
+
+    <div bind:this={keys_div} class="keys rounded-md shadow-inner shadow-zinc-500 relative flex justify-center overflow-auto p-4 scroll-smooth border-4 border-zinc-200"
+        class:accidental-end={accidental_end}
+        class:accidental-start={accidental_start}
+        class:selected
+    >
+        {#each naturals as n}
+            <button 
+                onclick={() => handleNoteClick(n)}
+                id={n}
+                class="key white border border-zinc-800 flex items-end justify-center pb-4 shrink-0 rounded-b-lg shadow-md"
+                class:highlighted={piano.highlighted_notes.includes(n)}
+            >   
                 {get_pitch(n)}
             </button>
-
-            {#if get_pitch_index(n) === 3 || get_pitch_index(n) === 10}
-                <button class="key black invisible bg-black text-white flex items-end justify-center pb-4">{n}</button>
-            {/if}
         {/each}
+        <div class="accidentals h-0 absolute flex"
+            class:has-first-key={accidental_start}
+        >
+            {#each accidentals as n}
+                <button 
+                    id={n}
+                    onclick={() => handleNoteClick(n)}
+                    class="key black border border-zinc-800 flex items-end justify-center pb-4 rounded-b-lg shadow-md"
+                    class:highlighted={piano.highlighted_notes.includes(n)}
+                >
+                    {get_pitch(n)}
+                </button>
+
+                {#if get_pitch_index(n) === 3 || get_pitch_index(n) === 10}
+                    <button class="key black invisible bg-black text-white flex items-end justify-center pb-4">{n}</button>
+                {/if}
+            {/each}
+        </div>
     </div>
 </div>
-
 
 <style lang="postcss">
     .keys {
@@ -92,6 +113,7 @@
     .key {
         transition: scale ease-in-out 100ms, padding ease-in-out 100ms, font-size ease-in-out 100ms;
         box-shadow: 0 5px 1px rgba(32,32,32,0.2);
+        font-size: calc(var(--key-width) / 2.5);
 
         &:active {
             @apply text-sm;
@@ -137,5 +159,13 @@
         &:active {
             box-shadow: 0 3px 1px rgba(32,32,32,0.2);
         }
+    }
+
+    .keys.selected {
+        @apply border-yellow-500 rounded;
+    }
+
+    button.selected .dot {
+        @apply bg-yellow-400 border-yellow-500 shadow-md;
     }
 </style>

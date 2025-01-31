@@ -1,13 +1,7 @@
 // const naturals = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G' ] as const;
 // export type Natural = typeof naturals[number];
 
-export const dispay_types = [
-    'note', 'major key', 'minor key', 
-    'major triad', 'minor triad', 
-    'diminished triad', 'augmented triad',
-    'sus2', 'sus4',
-    'major7', 'minor7', 'dominant7', 'diminished7'
-] as const;
+
 
 export type Natural = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
 export type Sharp = `${Natural}#`;
@@ -19,7 +13,7 @@ export type Note = `${Pitch}${Octave}`;
 export interface NoteRange { low: Note, high: Note };
 export type PitchType = 'natural' | 'flat' | 'sharp';
 export type Interval = 'major' | 'minor' | 'diminished' | 'augmented' | 'dominant';
-export type Display = typeof dispay_types[number];
+
 
 const MAX_PITCH_INDEX = 11;
 const MAX_OCTAVE = 8;

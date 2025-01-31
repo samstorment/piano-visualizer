@@ -46,8 +46,5 @@ export function play_note(note: Note, duration = .5) {
 
 function get_frequency(note: Note) {
     const half_step_diff = get_half_step_difference(note, "C0");
-
-    console.log(note, half_step_diff);
-
     return 16.35 * Math.pow(2, half_step_diff / 12);
 }
