@@ -13,10 +13,10 @@ import { create_rack } from "$lib/rack.svelte";
 <div class="flex">
     <Sidebar bind:piano={rack.selected_piano} />
 
-    <div class="flex flex-col flex-1 min-w-0">
+    <div class="flex flex-col flex-1 min-w-0 min-h-dvh">
 
         <!-- playing with this not in love with it -->
-        <div class="max-w-fit mx-auto">
+        <div class="max-w-fit">
             <ul 
                 class={{
                     "grid gap-4 p-4": true,

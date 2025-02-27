@@ -72,25 +72,27 @@
         {/if}
     </div>
 
-    <div bind:this={keys_div} class="keys rounded-md shadow-inner shadow-zinc-500 relative flex overflow-auto p-4 scroll-smooth border-4 border-zinc-200"
+    <div bind:this={keys_div} class="rounded-md shadow-inner shadow-zinc-500 relative flex overflow-auto p-4 scroll-smooth border-4 border-zinc-200"
         style="--natural-count: {naturals.length}; --accidental-count: {accidentals.length};"
         class:accidental-end={accidental_end}
         class:accidental-start={accidental_start}
         class:selected
     >
-        {#each notes as n, i}
-            <button 
-                onclick={() => handleNoteClick(n)}
-                id={n}
-                class="key white border border-zinc-800 flex items-end justify-center shrink-0 pb-2 px-1 rounded-b-lg shadow-md"
-                class:highlighted={piano.highlighted_notes.includes(n)}
-                class:white={is_natural(n)}
-                class:black={is_accidental(n)}
-                style="--key-column: {natural_columns[i]};"
-            >   
-                {get_pitch(n)}
-            </button>
-        {/each}
+        <div class="keys">
+            {#each notes as n, i}
+                <button 
+                    onclick={() => handleNoteClick(n)}
+                    id={n}
+                    class="key white border border-zinc-800 flex items-end justify-center shrink-0 pb-2 px-1 rounded-b-lg shadow-md"
+                    class:highlighted={piano.highlighted_notes.includes(n)}
+                    class:white={is_natural(n)}
+                    class:black={is_accidental(n)}
+                    style="--key-column: {natural_columns[i]};"
+                >   
+                    {get_pitch(n)}
+                </button>
+            {/each}
+        </div>
     </div>
 </div>
 
@@ -99,16 +101,20 @@
         display: grid;
         gap: 2px;
         position: relative;
+        isolation: isolate;
+
         --height-white: 200px;
+        --min-width-white: 35px;
+
         --height-black: calc(var(--height-white) * .66);
-        --min-width-white: calc(var(--height-white) / 6);
         --min-width-black: calc(var(--min-width-white) * .75);
 
 
         /* remove these three lines for wide keys with unconstrained size */
-        --max-width-white: calc(var(--height-white) / 3);
+        --max-width-white: 50px;
         --max-width-black: calc(var(--max-width-white) * .75);
-        max-width: fit-content;
+        /* max-width: fit-content; */
+        /* margin: 0 auto; */
     }
 
     .key {
