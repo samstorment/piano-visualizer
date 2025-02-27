@@ -19,7 +19,11 @@
 </script>
 
 
-<aside class="sticky top-0 bg-white z-10 border-r border-zinc-900 h-dvh">
+<aside class={{ 
+    "top-0 bg-white z-10 border-r border-zinc-900 h-dvh": true,
+    "fixed sm:sticky": open,
+    "sticky": !open
+}}>
 
     <button class="absolute right-0 border translate-x-1/2 bg-white border-black rounded px-1 shadow top-4 hover:shadow z-20"
         onclick={() => open = !open}

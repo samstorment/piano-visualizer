@@ -12,7 +12,7 @@ export const display_types = [
 
 export type Display = typeof display_types[number];
 
-export const board_sizes = [ 88, 76, 61, 49, 37, 32, 25 ] as const;
+export const board_sizes = [ 25, 32, 37, 49, 61, 76, 88 ] as const;
 
 export type BoardSize = typeof board_sizes[number];
 
