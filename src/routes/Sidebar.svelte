@@ -14,9 +14,7 @@
 
     function display_change(display: Display) {
         piano.display = display;
-        piano.highlighted_notes.forEach(n => {
-            play_note(n)
-        });
+        piano.play_highlighted_notes();
     }
 </script>
 

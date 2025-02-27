@@ -29,9 +29,7 @@
     function handleNoteClick(note: Note) {
         piano.selected_note = note;
         rack.selected_id = piano.id;
-        piano.highlighted_notes.forEach(n => {
-            play_note(n)
-        });
+        piano.play_highlighted_notes();
     }
 
 </script>
@@ -47,7 +45,7 @@
             <span class={{ 'w-8': true, 'text-zinc-500': !selected }}>{piano.selected_note}</span>
         </button>
 
-        <select class="border px-2 rounded border-zinc-500" bind:value={piano.display}>
+        <select class="border px-2 rounded border-zinc-500" bind:value={piano.display} onchange={() => piano.play_highlighted_notes()}>
             {#each display_types as dt}
                 <option value={dt}>{dt}</option>
             {/each}

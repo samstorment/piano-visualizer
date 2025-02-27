@@ -1,4 +1,6 @@
 import { get_augmented_triad, get_diminished_7, get_diminished_triad, get_dominant_7, get_major_7, get_major_key, get_major_triad, get_minor_7, get_minor_key, get_minor_triad, get_sus_2, get_sus_4, type Note, type NoteRange } from "$lib";
+import { tick } from "svelte";
+import { play_note } from "./sound";
 
 export const display_types = [
     'note', 'major key', 'minor key', 
@@ -24,7 +26,7 @@ export const note_ranges: Record<BoardSize, NoteRange> = {
     25: { low: "C3", high: "C5" },
 };
 
-interface Props {
+export interface CreatePianoProps {
     display?: Display,
     // range?: NoteRange,
     board_size?: BoardSize,
@@ -35,7 +37,7 @@ export function createPiano({
     display = "note",
     board_size = 88,
     selected_note = 'C4'
-}: Props = {}) {
+}: CreatePianoProps = {}) {
     let _display = $state(display);
     let _range = $state(note_ranges[board_size]);
     let _selected_note = $state(selected_note);
@@ -46,7 +48,6 @@ export function createPiano({
         set display(value: Display) { _display = value },
 
         get range() { return _range },
-        // set range(value: NoteRange) { _range = value },
 
         get selected_note() { return _selected_note },
         set selected_note(value: Note) { _selected_note = value },
@@ -72,6 +73,9 @@ export function createPiano({
         },
         set board_size(value: BoardSize) {
             _range = note_ranges[value];
+        },
+        async play_highlighted_notes() {
+            this.highlighted_notes.forEach(n => play_note(n));
         }
     }
 }

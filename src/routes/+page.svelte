@@ -92,7 +92,7 @@
 
             <button 
                 class="border rounded px-2 border-yellow-900 bg-yellow-500 whitespace-nowrap"
-                onclick={() => rack.pianos.push(createPiano())}
+                onclick={() => rack.add_piano()}
             >
                 Add Piano +
             </button>
