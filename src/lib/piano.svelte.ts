@@ -10,19 +10,34 @@ export const display_types = [
 
 export type Display = typeof display_types[number];
 
+export const board_sizes = [ 88, 76, 61, 49, 37, 32, 25 ] as const;
+
+export type BoardSize = typeof board_sizes[number];
+
+export const note_ranges: Record<BoardSize, NoteRange> = {
+    88: { low: "A0", high: "C8" },
+    76: { low: "E0", high: "G7" },
+    61: { low: "C1", high: "C6" },
+    49: { low: "C2", high: "C6" },
+    37: { low: "C2", high: "C5" },
+    32: { low: "F2", high: "C5" },
+    25: { low: "C3", high: "C5" },
+};
+
 interface Props {
     display?: Display,
-    range?: NoteRange,
+    // range?: NoteRange,
+    board_size?: BoardSize,
     selected_note?: Note
 }
 
 export function createPiano({
     display = "note",
-    range = { low: 'A0', high: 'C8' },
+    board_size = 88,
     selected_note = 'C4'
 }: Props = {}) {
     let _display = $state(display);
-    let _range = $state(range);
+    let _range = $state(note_ranges[board_size]);
     let _selected_note = $state(selected_note);
     let _id = crypto.randomUUID();
 
@@ -31,7 +46,7 @@ export function createPiano({
         set display(value: Display) { _display = value },
 
         get range() { return _range },
-        set range(value: NoteRange) { _range = value },
+        // set range(value: NoteRange) { _range = value },
 
         get selected_note() { return _selected_note },
         set selected_note(value: Note) { _selected_note = value },
@@ -54,6 +69,9 @@ export function createPiano({
             if (_display === 'dominant7') return get_dominant_7(_selected_note);
             if (_display === 'diminished7') return get_diminished_7(_selected_note);
             return [];
+        },
+        set board_size(value: BoardSize) {
+            _range = note_ranges[value];
         }
     }
 }

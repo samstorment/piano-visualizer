@@ -6,7 +6,7 @@
 export type Natural = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
 export type Sharp = `${Natural}#`;
 export type Flat = `${Natural}b`;
-export type Octave = 0 | 1 | 2 | 3 | 4 | 3 | 6 | 7 | 8;
+export type Octave = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export type PitchIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 export type Pitch = `${Natural | Sharp | Flat}`;
 export type Note = `${Pitch}${Octave}`;
@@ -32,6 +32,7 @@ const pitch_indices: Record<Pitch, PitchIndex> = {
     'A#': 10, 'Bb': 10,
     'B' : 11, 'Cb': 11,
 }
+
 
 export function is_valid_note(str: string) {
     const all_notes = get_notes({ low: "A0", high: "G8" });

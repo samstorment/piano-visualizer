@@ -1,4 +1,4 @@
-import { createPiano, type Piano } from "./piano.svelte";
+import { createPiano, type BoardSize, type Piano } from "./piano.svelte";
 
 interface Props {
     pianos?: Piano[],
@@ -9,6 +9,7 @@ export function create_rack({
 }: Props = {}) {
     let _pianos = $state(pianos);
     let _selected_id = $state(pianos[0]?.id);
+    let _board_size = $state(88 as BoardSize);
 
     return {
         get pianos() { return _pianos },
@@ -20,10 +21,19 @@ export function create_rack({
         remove_piano: (piano: Piano) => {
             const i = _pianos.findIndex(p => p.id === piano.id);
             if (i < 0) return;
-            if (i === 0 && _pianos.length === 1) return;
-            else if (i === 0) _selected_id = _pianos[1].id;
-            else _selected_id = _pianos[i - 1].id;
+
+            if (_selected_id === piano.id) {
+                if (i < _pianos.length - 1) _selected_id = _pianos[i + 1].id;
+                else _selected_id = _pianos[i - 1].id;
+            }
+
             _pianos.splice(i, 1);
+        },
+        get board_size(): BoardSize {
+            return _board_size;
+        },
+        set board_size(value: BoardSize) {
+            _pianos.forEach(p => p.board_size = value)
         }
     }
 }

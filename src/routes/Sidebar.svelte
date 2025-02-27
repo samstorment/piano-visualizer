@@ -2,10 +2,13 @@
 	import { get_pitch, type Note, type NoteRange } from "$lib";
 	import { display_types, type Display, type Piano } from '$lib/piano.svelte';
     import { play_note } from "$lib/sound";
+	import { fly, slide } from "svelte/transition";
 
     interface Props {
         piano: Piano
     }
+
+    let open = $state(true);
 
     let { piano = $bindable() }: Props = $props();
 
@@ -18,27 +21,40 @@
 </script>
 
 
-<aside class="sticky top-0 border-r border-zinc-900 h-dvh p-4 w-[200px] shrink-0 flex flex-col gap-4 overflow-auto">
-    {#if !piano.selected_note}
-        <h1 class="text-3xl font-serif">Select a Note</h1>
-    {:else}
-        <h1 class="text-3xl font-serif">{get_pitch(piano.selected_note)}</h1>
+<aside class="sticky top-0 bg-white z-10 border-r border-zinc-900 h-dvh">
 
-        {#each display_types as dt}
-            <button 
-                onclick={() => display_change(dt)}
-                class:highlighted={piano.display === dt}
-            >
-                {dt}
-            </button>
-        {/each}
+    <button class="absolute right-0 border translate-x-1/2 bg-white border-black rounded px-1 shadow top-4 hover:shadow z-20"
+        onclick={() => open = !open}
+    >
+        {#if open}
+            &lt;
+        {:else}
+            &gt;
+        {/if}
+    </button>
+
+    {#if open}
+        <div class="sticky top-0 overflow-auto shrink-0 flex flex-col gap-3 h-full p-4 w-[200px]">
+            {#each display_types as dt}
+                <button 
+                    onclick={() => display_change(dt)}
+                    class:highlighted={piano.display === dt}
+                    class="display"
+                >
+                    {dt}
+                </button>
+            {/each}
+        </div>
+    {:else}
+        <div class="w-4"></div>
     {/if}
+
 </aside>
 
 
 <style lang="postcss">
-    button {
-        @apply border p-2 border-zinc-500 rounded-sm w-full hover:bg-zinc-100 rounded-r-lg;
+    button.display {
+        @apply border px-2 py-1 border-zinc-500 rounded-sm w-full hover:bg-zinc-100 rounded-r-lg;
         box-shadow: -.25rem .25rem black;
 
         &:active {

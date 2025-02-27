@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { get_notes, get_pitch, get_pitch_index, is_accidental, is_flat, is_natural, is_sharp, type Note, type NoteRange } from "$lib";
-	import type { Display, Piano } from "$lib/piano.svelte";
+	import { display_types, type Display, type Piano } from "$lib/piano.svelte";
 	import type { Rack } from "$lib/rack.svelte";
 	import { play_note } from "$lib/sound";
+	import { fly, slide } from "svelte/transition";
 
     interface Props {
         rack: Rack,
@@ -35,16 +36,25 @@
 
 </script>
 
-<div>
-    <div class="flex mb-2 gap-2 items-center">
+<div in:fly={{ y: 200 }}>
+    <div class="flex mb-2 gap-2 items-center overflow-auto">
         <button 
-            class="flex-1 flex gap-2"
+            class="flex gap-2 sticky left-0 bg-white"
             onclick={() => rack.selected_id = piano.id}
             class:selected
         >
-            <div class="dot rounded-full border-4 border-zinc-200 aspect-square w-7"></div>
-            <span class={{ 'text-zinc-500': !selected }}>{piano.selected_note} {piano.display}</span>
+            <div class="dot rounded-full border-4 border-zinc-200 aspect-square w-7 h-7 shadow"></div>
+            <span class={{ 'w-8': true, 'text-zinc-500': !selected }}>{piano.selected_note}</span>
         </button>
+
+        <select class="border px-2 rounded border-zinc-500" bind:value={piano.display}>
+            {#each display_types as dt}
+                <option value={dt}>{dt}</option>
+            {/each}
+        </select>
+
+       
+
         {#if rack.pianos.length > 1}
             <button 
                 class="border-2 rounded px-2 border-zinc-300 ml-auto" 
