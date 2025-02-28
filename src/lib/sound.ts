@@ -1,5 +1,5 @@
 import { browser } from "$app/environment";
-import { get_half_step_difference, get_octave, get_pitch_index, type Note, type Pitch } from "$lib";
+import { get_half_step_difference, get_octave, get_pitch_index, type Note, type Pitch } from "$lib/music";
 
 // Create the audio context
 

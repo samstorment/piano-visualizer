@@ -2,6 +2,20 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-button {
-    cursor: pointer;
+@layer base {
+
+    body {
+        @apply text-zinc-800;
+    }
+
+    button {
+        cursor: pointer;
+    }
+}
+
+@layer components {
+    .lucide-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
 }

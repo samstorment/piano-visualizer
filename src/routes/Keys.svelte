@@ -1,8 +1,11 @@
 <script lang="ts">
-	import { get_notes, get_pitch, get_pitch_index, is_accidental, is_flat, is_natural, is_sharp, type Note, type NoteRange } from "$lib";
+	import { debounce } from "$lib";
+	import { get_notes, get_pitch, get_pitch_index, is_accidental, is_flat, is_natural, is_sharp, type Note, type NoteRange } from "$lib/music";
 	import { display_types, type Display, type Piano } from "$lib/piano.svelte";
 	import type { Rack } from "$lib/rack.svelte";
 	import { play_note } from "$lib/sound";
+	import { Circle, CircleCheck, CircleCheckBig, Trash, Trash2, X } from "lucide-svelte";
+	import { onMount } from "svelte";
 	import { fly, slide } from "svelte/transition";
 
     interface Props {
@@ -17,7 +20,7 @@
 
     let key_column = 1;
 
-    let keys_div: HTMLDivElement;
+    let keys_container_element: HTMLDivElement;
 
     let notes = $derived(get_notes(piano.range).toArray());
     let naturals = $derived(notes.filter(is_natural));
@@ -27,7 +30,6 @@
         let col_number = 0;
         return notes.map(n => is_natural(n) ? col_number++ : col_number);
     });
-
 
     let accidental_start = is_accidental(piano.range.low);
     let accidental_end = is_accidental(piano.range.high);
@@ -40,18 +42,52 @@
         piano.play_highlighted_notes();
     }
 
+    const scrollToSelected = () => {
+        if (!keys_container_element) return;
 
+        const highlighted_elements = Array.from(keys_container_element.querySelectorAll<HTMLElement>('.key.highlighted'));
+
+        const first_note_element = highlighted_elements.at(0);
+        const last_note_element = highlighted_elements.at(-1);
+
+        if (!first_note_element || !last_note_element) return;
+
+        const containerRect = keys_container_element.getBoundingClientRect();
+        const firstNoteRect = first_note_element.getBoundingClientRect();
+        const lastNoteRect = last_note_element.getBoundingClientRect();
+
+        // Check if first or last note are overflowing the container
+        if (lastNoteRect.right > containerRect.right || firstNoteRect.left < containerRect.left) {
+            // Scroll first note to be 20px from the left
+            const scrollLeft = keys_container_element.scrollLeft + (firstNoteRect.left - containerRect.left - firstNoteRect.width);            
+            keys_container_element.scrollTo({ left: scrollLeft, behavior: 'instant' });
+        }
+
+    }
+
+    onMount(() => {
+        const observer = new ResizeObserver(scrollToSelected);
+        if (keys_container_element) {
+            observer.observe(keys_container_element);
+        }
+    })
+    
 </script>
 
 <div in:fly={{ y: 200 }}>
-    <div class="flex mb-2 gap-2 items-center overflow-auto">
+    <header class="flex mb-2 gap-2 items-center overflow-auto">
         <button 
-            class="flex gap-2 sticky left-0 bg-white"
+            class={{"flex gap-2 items-center flex-1 bg-white": true, "text-zinc-500": !selected }}
             onclick={() => rack.selected_id = piano.id}
             class:selected
         >
-            <div class="dot rounded-full border-4 border-zinc-200 aspect-square w-7 h-7 shadow"></div>
-            <span class={{ 'w-8': true, 'text-zinc-500': !selected }}>{piano.selected_note}</span>
+            {#if selected}
+                <CircleCheck class="text-yellow-600 w-6 h-6" />
+            {:else}
+                <Circle class=" w-6 h-6" />
+            {/if}
+
+            <span class="text-lg">{piano.selected_note}</span>
         </button>
 
         <select class="border px-2 rounded border-zinc-500" bind:value={piano.display} onchange={() => piano.play_highlighted_notes()}>
@@ -60,19 +96,20 @@
             {/each}
         </select>
 
-       
+    
 
         {#if rack.pianos.length > 1}
             <button 
-                class="border-2 rounded px-2 border-zinc-300 ml-auto" 
+                class="hover:text-yellow-600" 
                 onclick={() => rack.remove_piano(piano)}
             >
-                Delete
+                <span class="sr-only">Delete Piano</span>
+                <X />
             </button>
         {/if}
-    </div>
+    </header>
 
-    <div bind:this={keys_div} class="rounded-md shadow-inner shadow-zinc-500 relative flex overflow-auto p-4 scroll-smooth border-4 border-zinc-200"
+    <div bind:this={keys_container_element} class="keys-container rounded-md shadow-inner shadow-zinc-500 relative flex overflow-auto p-4 scroll-smooth border-4 border-zinc-300"
         style="--natural-count: {naturals.length}; --accidental-count: {accidentals.length};"
         class:accidental-end={accidental_end}
         class:accidental-start={accidental_start}
@@ -82,11 +119,11 @@
             {#each notes as n, i}
                 <button 
                     onclick={() => handleNoteClick(n)}
-                    id={n}
                     class="key white border border-zinc-800 flex items-end justify-center shrink-0 pb-2 px-1 rounded-b-lg shadow-md"
                     class:highlighted={piano.highlighted_notes.includes(n)}
                     class:white={is_natural(n)}
                     class:black={is_accidental(n)}
+                    data-note={n}
                     style="--key-column: {natural_columns[i]};"
                 >   
                     {get_pitch(n)}
@@ -94,9 +131,11 @@
             {/each}
         </div>
     </div>
+
 </div>
 
 <style lang="postcss">
+
     .keys {
         display: grid;
         gap: 2px;
@@ -168,11 +207,8 @@
         @apply !bg-yellow-500 !text-black;
     }
 
-    .keys.selected {
+    .keys-container.selected {
         @apply border-yellow-500 rounded;
     }
 
-    button.selected .dot {
-        @apply bg-yellow-400 border-yellow-500 shadow-md;
-    }
 </style>

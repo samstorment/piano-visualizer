@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { get_pitch, type Note, type NoteRange } from "$lib";
+	import { get_pitch, type Note, type NoteRange } from "$lib/music";
 	import { display_types, type Display, type Piano } from '$lib/piano.svelte';
     import { play_note } from "$lib/sound";
+	import { ChevronLeft, ChevronRight } from "lucide-svelte";
 	import { fly, slide } from "svelte/transition";
 
     interface Props {
@@ -25,13 +26,14 @@
     "sticky": !open
 }}>
 
-    <button class="absolute right-0 border translate-x-1/2 bg-white border-black rounded px-1 shadow top-4 hover:shadow z-20"
+    <button class="toggle absolute right-0 border translate-x-1/2 bg-white border-black rounded shadow top-4 hover:shadow z-20"
         onclick={() => open = !open}
     >
+        <span class="sr-only">Toggle Sidebar</span>
         {#if open}
-            &lt;
+            <ChevronLeft />
         {:else}
-            &gt;
+            <ChevronRight />
         {/if}
     </button>
 
@@ -67,5 +69,15 @@
         &.highlighted {
             @apply bg-yellow-500;
         } 
+    }
+
+    button.toggle {
+        box-shadow: -.125rem .125rem black;
+
+        &:active {
+            translate: -.06rem .06rem;
+            box-shadow: -.06rem .06rem black;
+        }
+
     }
 </style>

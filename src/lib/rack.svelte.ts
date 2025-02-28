@@ -1,26 +1,47 @@
-import { createPiano, type BoardSize, type CreatePianoProps, type Piano } from "./piano.svelte";
+import { browser } from "$app/environment";
+import { create_piano, type KeyCount as KeyCount, type CreatePianoProps, type Piano, type PianoID } from "./piano.svelte";
 
 
-const DEFAULT_BOARD_SIZE: BoardSize = 32;
+export type RackAlignment = 'left' | 'center' | 'right';
+export type RackColumns = 1 | 2 | 3 | 4;
 
-export function create_rack() {
+export interface CreateRackProps {
+    alignment?: RackAlignment,
+    columns?: RackColumns,
+    key_count?: KeyCount,
+    pianos?: Piano[],
+}
 
-    let piano: Piano = createPiano({ board_size: DEFAULT_BOARD_SIZE });
+export function create_rack({
+    alignment = 'left',
+    columns = 1,
+    key_count = 32,
+    pianos = [ create_piano({ key_count }) ]
+}: CreateRackProps = {}) {
 
-    let _pianos = $state([ piano ]);
-    let _selected_id = $state(_pianos[0]?.id);
-    let _board_size = $state<BoardSize>(DEFAULT_BOARD_SIZE);
+    let _pianos = $state(pianos);
+    let _selected_id = $state(pianos[0].id);
+    let _key_count = $state(key_count);
+    let _columns = $state(columns);
+    let _alignment = $state(alignment);
 
     return {
         get pianos() { return _pianos },
         get selected_id() { return _selected_id },
         set selected_id(value) { _selected_id = value },
-        get selected_piano(): Piano { 
-            return _pianos.find(p => p.id === _selected_id)!
+        get selected_piano() { return _pianos.find(p => p.id === _selected_id)! },
+        get key_count() { return _key_count },
+        set key_count(value) {
+            _key_count = value;
+            _pianos.forEach(p => p.key_count = value)
         },
-        add_piano(props: CreatePianoProps = { board_size: _board_size }) {
-            const piano = createPiano(props);
-            _pianos.push(createPiano(props));
+        get columns() { return _columns },
+        set columns(value) { _columns = value },
+        get alignment() { return _alignment },
+        set alignment(value) { _alignment = value },
+        add_piano(props: CreatePianoProps = { key_count: _key_count }) {
+            const piano = create_piano(props);
+            _pianos.push(create_piano(props));
             return piano;
         },
         remove_piano(piano: Piano) {
@@ -33,13 +54,6 @@ export function create_rack() {
             }
 
             _pianos.splice(i, 1);
-        },
-        get board_size(): BoardSize {
-            return _board_size;
-        },
-        set board_size(value: BoardSize) {
-            _board_size = value;
-            _pianos.forEach(p => p.board_size = value)
         }
     }
 }
