@@ -54,19 +54,19 @@ const dominant7_chord: IChordDisplay =      { id: DisplayId.DOMINANT7_CHORD,    
 const diminished7_chord: IChordDisplay =    { id: DisplayId.DIMINISHED7_CHORD,  type: 'chord', style: 'diminished7',  inversion: 0, name: 'Diminished 7th' } as const;
 
 const display_types = {
-    [`${DisplayId.NOTE}`]: note,
-    [`${DisplayId.MAJOR_SCALE}`]: major_scale,
-    [`${DisplayId.MINOR_SCALE}`]: minor_scale,
-    [`${DisplayId.MAJOR_CHORD}`]: major_chord,
-    [`${DisplayId.MINOR_CHORD}`]: minor_chord,
-    [`${DisplayId.DIMINISHED_CHORD}`]: diminished_chord,
-    [`${DisplayId.AUGMENTED_CHORD}`]: augmented_chord,
-    [`${DisplayId.SUS2_CHORD}`]: sus2_chord,
-    [`${DisplayId.SUS4_CHORD}`]: sus4_chord,
-    [`${DisplayId.MAJOR7_CHORD}`]: major7_chord,
-    [`${DisplayId.MINOR7_CHORD}`]: minor7_chord,
-    [`${DisplayId.DOMINANT7_CHORD}`]: dominant7_chord,
-    [`${DisplayId.DIMINISHED7_CHORD}`]: diminished7_chord,
+    [DisplayId.NOTE]: note,
+    [DisplayId.MAJOR_SCALE]: major_scale,
+    [DisplayId.MINOR_SCALE]: minor_scale,
+    [DisplayId.MAJOR_CHORD]: major_chord,
+    [DisplayId.MINOR_CHORD]: minor_chord,
+    [DisplayId.DIMINISHED_CHORD]: diminished_chord,
+    [DisplayId.AUGMENTED_CHORD]: augmented_chord,
+    [DisplayId.SUS2_CHORD]: sus2_chord,
+    [DisplayId.SUS4_CHORD]: sus4_chord,
+    [DisplayId.MAJOR7_CHORD]: major7_chord,
+    [DisplayId.MINOR7_CHORD]: minor7_chord,
+    [DisplayId.DOMINANT7_CHORD]: dominant7_chord,
+    [DisplayId.DIMINISHED7_CHORD]: diminished7_chord,
 }
 
 export function get_display(display: DisplayId) {

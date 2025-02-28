@@ -9,39 +9,39 @@
 	import { browser } from "$app/environment";
 
     let rack = $state(create_rack());
-    let initialized = $state(true);
+    let initialized = $state(false);
 
     // load rack saved in local storage
     // don't really like that this causes a load but its a useful feature
-    // onMount(() => {
-    //     if (!browser) {
-    //         initialized = true;
-    //         return;
-    //     }
+    onMount(() => {
+        if (!browser) {
+            initialized = true;
+            return;
+        }
 
-    //     const stored_json = localStorage.getItem('rack');
+        const stored_json = localStorage.getItem('rack');
 
-    //     if (!stored_json) {
-    //         initialized = true;
-    //         return;
-    //     }
+        if (!stored_json) {
+            initialized = true;
+            return;
+        }
 
-    //     const stored = JSON.parse(stored_json) as Rack;
+        const stored = JSON.parse(stored_json) as Rack;
 
-    //     rack = create_rack({ 
-    //         ...stored, 
-    //         pianos: stored.pianos.map(create_piano)
-    //     });
+        rack = create_rack({ 
+            ...stored, 
+            pianos: stored.pianos.map(create_piano)
+        });
 
-    //     rack.selected_id = stored.selected_id;
+        rack.selected_id = stored.selected_id;
 
-    //     initialized = true;
-    // });
+        initialized = true;
+    });
 
-    // $effect(() => {
-    //     if (!browser) return;
-    //     localStorage.setItem('rack', JSON.stringify($state.snapshot(rack)));
-    // });
+    $effect(() => {
+        if (!browser) return;
+        localStorage.setItem('rack', JSON.stringify($state.snapshot(rack)));
+    });
 </script>
 
 <div class="flex">

@@ -78,13 +78,13 @@
         {display.name}
     </button>
     {#if highlighted && piano.inversions.length > 0 && piano.display.type === 'chord'}
-        <div class="text-sm" in:slide={{ duration: 200 }}>
-            <ul class="flex justify-evenly">
+        <div class="text-sm pl-4">
+            <p class="text-sm italic mb-1.5">Inversions</p>
+            <ul class="flex gap-2">
                 {#each piano.inversions as _, i}
                     <li>
                         <button 
                             class="inversion border border-black rounded-full w-7 h-7" 
-                            style="--wow: {piano.inversion}"
                             class:highlighted={i === piano.inversion}
                             onclick={() => inversion_click(i)}
                         >

@@ -19,23 +19,25 @@ export const note_ranges: Record<KeyCount, NoteRange> = {
 export type PianoID = ReturnType<typeof crypto.randomUUID>;
 
 export interface CreatePianoProps {
-    display_id?: DisplayId,
+    display_id?: DisplayId;
     // range?: NoteRange,
-    key_count?: KeyCount,
-    selected_note?: Note,
-    id?: PianoID
+    key_count?: KeyCount;
+    selected_note?: Note;
+    id?: PianoID;
+    inversion?: number;
 }
 
 export function create_piano({
     display_id = DisplayId.NOTE,
     key_count = 88,
     selected_note = 'C4',
-    id = crypto.randomUUID()
+    id = crypto.randomUUID(),
+    inversion = 0
 }: CreatePianoProps = {}) {
     let _display_id = $state(display_id);
     let _selected_note = $state(selected_note);
     let _key_count = $state(key_count);
-    let _inversion = $state(0);
+    let _inversion = $state(inversion);
 
     return {
         get display_id() { return _display_id },

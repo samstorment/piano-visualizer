@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ordinalize } from "$lib";
 	import { get_display, get_displays } from "$lib/display";
 	import { get_inversions, get_notes, get_pitch, get_pitch_index, is_accidental, is_flat, is_natural, is_sharp, type Note, type NoteRange } from "$lib/music";
 	import { type Piano } from "$lib/piano.svelte";
@@ -77,7 +78,7 @@
 <div in:fly={{ y: 200 }}>
     <header class="flex mb-2 gap-2 items-center overflow-auto">
         <button 
-            class={{"flex gap-2 items-center flex-1 bg-white": true, "text-zinc-500": !selected }}
+            class={{"flex gap-2 items-center bg-white": true, "text-zinc-500": !selected }}
             onclick={() => rack.selected_id = piano.id}
             class:selected
         >
@@ -87,7 +88,7 @@
                 <Circle class=" w-6 h-6" />
             {/if}
 
-            <span class="text-lg">{piano.selected_note}</span>
+            <span class="text-lg w-8 text-left">{piano.selected_note}</span>
         </button>
 
         <select class="border px-2 rounded border-zinc-500" bind:value={piano.display_id} onchange={() => piano.play_highlighted_notes()}>
@@ -96,11 +97,14 @@
             {/each}
         </select>
 
+        {#if piano.display.type === 'chord' && piano.inversion > 0}
+            <span>{ordinalize(piano.inversion)} Inversion</span>
+        {/if}
     
 
         {#if rack.pianos.length > 1}
             <button 
-                class="hover:text-yellow-600" 
+                class="hover:text-yellow-600 ml-auto" 
                 onclick={() => rack.remove_piano(piano)}
             >
                 <span class="sr-only">Delete Piano</span>
@@ -142,7 +146,7 @@
         position: relative;
         isolation: isolate;
 
-        --height-white: 200px;
+        --height-white: 130px;
         --min-width-white: 35px;
 
         --height-black: calc(var(--height-white) * .66);
