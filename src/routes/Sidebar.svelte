@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { get_pitch, type Note, type NoteRange } from "$lib/music";
-	import { display_types, type Display, type Piano } from '$lib/piano.svelte';
+	import { DisplayId, get_display } from "$lib/display";
+	import { get_inversions, get_pitch, type Note, type NoteRange } from "$lib/music";
+	import { type Piano } from '$lib/piano.svelte';
     import { play_note } from "$lib/sound";
 	import { ChevronLeft, ChevronRight } from "lucide-svelte";
 	import { fly, slide } from "svelte/transition";
@@ -13,8 +14,13 @@
 
     let { piano = $bindable() }: Props = $props();
 
-    function display_change(display: Display) {
-        piano.display = display;
+    function display_change(display_id: DisplayId) {
+        piano.display_id = display_id;
+        piano.play_highlighted_notes();
+    }
+
+    function inversion_click(inversion: number) {
+        piano.inversion = inversion;
         piano.play_highlighted_notes();
     }
 </script>
@@ -39,21 +45,57 @@
 
     {#if open}
         <div class="sticky top-0 overflow-auto shrink-0 flex flex-col gap-3 h-full p-4 w-[200px]">
-            {#each display_types as dt}
-                <button 
-                    onclick={() => display_change(dt)}
-                    class:highlighted={piano.display === dt}
-                    class="display"
-                >
-                    {dt}
-                </button>
-            {/each}
+            {@render display_button(DisplayId.NOTE)}
+
+            {@render display_button(DisplayId.MAJOR_SCALE)}
+            {@render display_button(DisplayId.MINOR_SCALE)}
+
+            {@render display_button(DisplayId.MAJOR_CHORD)}
+            {@render display_button(DisplayId.MINOR_CHORD)}
+            {@render display_button(DisplayId.DIMINISHED_CHORD)}
+            {@render display_button(DisplayId.AUGMENTED_CHORD)}
+            {@render display_button(DisplayId.SUS2_CHORD)}
+            {@render display_button(DisplayId.SUS4_CHORD)}
+            {@render display_button(DisplayId.MAJOR7_CHORD)}
+            {@render display_button(DisplayId.MINOR7_CHORD)}
+            {@render display_button(DisplayId.DOMINANT7_CHORD)}
+            {@render display_button(DisplayId.DIMINISHED7_CHORD)}
         </div>
     {:else}
         <div class="w-4"></div>
     {/if}
 
 </aside>
+
+{#snippet display_button(display_id: DisplayId)}
+    {@const display = get_display(display_id)}
+    {@const highlighted = piano.display_id === display_id}
+    <button 
+        onclick={() => display_change(display_id)}
+        class:highlighted
+        class="display"
+    >
+        {display.name}
+    </button>
+    {#if highlighted && piano.inversions.length > 0 && piano.display.type === 'chord'}
+        <div class="text-sm" in:slide={{ duration: 200 }}>
+            <ul class="flex justify-evenly">
+                {#each piano.inversions as _, i}
+                    <li>
+                        <button 
+                            class="inversion border border-black rounded-full w-7 h-7" 
+                            style="--wow: {piano.inversion}"
+                            class:highlighted={i === piano.inversion}
+                            onclick={() => inversion_click(i)}
+                        >
+                            {i}
+                        </button>
+                    </li>
+                {/each}
+            </ul>
+        </div>
+    {/if}
+{/snippet}
 
 
 <style lang="postcss">
@@ -79,5 +121,9 @@
             box-shadow: -.06rem .06rem black;
         }
 
+    }
+
+    .inversion.highlighted {
+        @apply bg-yellow-500;
     }
 </style>

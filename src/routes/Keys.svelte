@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { debounce } from "$lib";
-	import { get_notes, get_pitch, get_pitch_index, is_accidental, is_flat, is_natural, is_sharp, type Note, type NoteRange } from "$lib/music";
-	import { display_types, type Display, type Piano } from "$lib/piano.svelte";
+	import { get_display, get_displays } from "$lib/display";
+	import { get_inversions, get_notes, get_pitch, get_pitch_index, is_accidental, is_flat, is_natural, is_sharp, type Note, type NoteRange } from "$lib/music";
+	import { type Piano } from "$lib/piano.svelte";
 	import type { Rack } from "$lib/rack.svelte";
 	import { play_note } from "$lib/sound";
 	import { Circle, CircleCheck, CircleCheckBig, Trash, Trash2, X } from "lucide-svelte";
@@ -41,7 +41,7 @@
         rack.selected_id = piano.id;
         piano.play_highlighted_notes();
     }
-
+    
     const scrollToSelected = () => {
         if (!keys_container_element) return;
 
@@ -90,9 +90,9 @@
             <span class="text-lg">{piano.selected_note}</span>
         </button>
 
-        <select class="border px-2 rounded border-zinc-500" bind:value={piano.display} onchange={() => piano.play_highlighted_notes()}>
-            {#each display_types as dt}
-                <option value={dt}>{dt}</option>
+        <select class="border px-2 rounded border-zinc-500" bind:value={piano.display_id} onchange={() => piano.play_highlighted_notes()}>
+            {#each get_displays() as d}
+                <option value={d.id}>{d.name}</option>
             {/each}
         </select>
 

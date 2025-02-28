@@ -172,6 +172,30 @@ export function* get_notes({ low, high }: NoteRange): Generator<Note> {
     }
 }
 
+export function get_inversions(notes: Note[]): Array<Note[]> {
+
+    const inversions: Array<Note[]> = [ notes ];
+
+    for (let i = 1; i < notes.length; i++) {
+        const inversion: Note[] = [];
+
+        for (let j = i; j < i + notes.length; j++) {
+            const index = j % notes.length;
+            let note = notes[index];
+
+            if (j >= notes.length) {
+                note = step_up(note, 12);
+            }
+            
+            inversion.push(note);
+        }
+
+        inversions.push(inversion);
+    }
+
+    return inversions;
+}
+
 export function get_major_key(note: Note) {
     const [ _1,, _2,, _3, _4,, _5,, _6,, _7, _8 ] = get_notes({ low: note, high: step_up(note, 12) });
     return [ _1, _2, _3, _4, _5, _6, _7, _8 ];
