@@ -12,7 +12,7 @@
     }: Props = $props();
 </script>
 
-<footer class="flex gap-2 items-center p-2 border-t border-black bg-white mt-auto sticky bottom-0 overflow-auto">
+<footer class="flex gap-2 items-center p-2 border-t border-black bg-white mt-auto overflow-auto z-50">
 
     <select 
         name="keyboard-size" 

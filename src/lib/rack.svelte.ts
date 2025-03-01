@@ -10,17 +10,19 @@ export interface CreateRackProps {
     columns?: RackColumns,
     key_count?: KeyCount,
     pianos?: Piano[],
+    selected_id?: PianoID
 }
 
 export function create_rack({
     alignment = 'left',
     columns = 1,
     key_count = 32,
-    pianos = [ create_piano({ key_count }) ]
+    pianos = [ create_piano({ key_count }) ],
+    selected_id = pianos[0]?.id
 }: CreateRackProps = {}) {
 
     let _pianos = $state(pianos);
-    let _selected_id = $state(pianos[0].id);
+    let _selected_id = $state(selected_id);
     let _key_count = $state(key_count);
     let _columns = $state(columns);
     let _alignment = $state(alignment);

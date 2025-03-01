@@ -1,33 +1,49 @@
-import { create_rack, type Rack } from "./rack.svelte";
+import { create_rack, type Rack } from "$lib/rack.svelte";
 
-interface ITab {
-    title: string
-}
+export type TabId = ReturnType<typeof crypto.randomUUID>;
 
-interface RackTab extends ITab {
-    rack: Rack 
-}
-
-// interface 
+type TabType = 'page' | 'rack';
 
 export interface CreateTabProps {
     title?: string;
-    rack?: Rack
+    id?: TabId;
 }
 
-export function create_tab({
-    title = 'New Tab',
-    rack = create_rack()
-}: CreateTabProps = {}) {
-    let _title = $state(title);
-    let _rack = $state(rack);
+abstract class BaseTab<T extends TabType> {
+    
+    abstract readonly type: T;
+    readonly id = crypto.randomUUID();
+    title: string = $state('Untitled')
 
-    return {
-        get title() { return _title },
-        set title(val) { _title = val },
-        get rack() { return _rack },
-        set rack(val) { _rack = val },
+    constructor({ title, id }: CreateTabProps = {}) {
+        this.title = title ?? this.title;
+        this.id = id ?? this.id;
     }
 }
 
-export type Tab = ReturnType<typeof create_tab>;
+
+export class RackTab extends BaseTab<"rack"> {
+
+    readonly type = "rack";
+    rack: Rack;
+
+    constructor(rack: Rack = create_rack(), props: CreateTabProps = {}) {
+        super(props);
+        this.rack = rack;
+    }
+}
+
+export type TabPage = 'about' | 'presets' | 'settings';
+
+export class PageTab extends BaseTab<"page"> {
+
+    readonly type = "page";
+    page: TabPage;
+
+    constructor(page: TabPage, props: CreateTabProps = { }) {
+        super(props);
+        this.page = page;
+    }
+}
+
+export type Tab = RackTab | PageTab;

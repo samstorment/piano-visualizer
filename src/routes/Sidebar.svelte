@@ -27,9 +27,7 @@
 
 
 <aside class={{ 
-    "top-0 bg-white z-10 border-r border-zinc-900 h-dvh": true,
-    "fixed sm:sticky": open,
-    "sticky": !open
+    "relative bg-white border-r border-zinc-900 min-h-0": true,
 }}>
 
     <button class="toggle absolute right-0 border translate-x-1/2 bg-white border-black rounded shadow top-4 hover:shadow z-20"

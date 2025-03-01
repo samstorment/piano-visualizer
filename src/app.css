@@ -6,6 +6,8 @@
 
     body {
         @apply text-zinc-800;
+        max-height: 100dvh;
+        overflow: hidden;
     }
 
     button {
