@@ -16,7 +16,7 @@
         active_tab_id = $bindable()
     }: Props = $props();
 
-    const key_count: KeyCount = 61;
+    const key_count: KeyCount = 49;
     const alignment: RackAlignment = 'center';
 
     function get_major_chord_pianos(note: Note) {
@@ -50,32 +50,40 @@
 <div class="p-4 flex flex-wrap gap-8">
 
     <div>
-        <h1 class="text-4xl mb-4">Major Chords</h1>
+        <h1 class="text-3xl mb-4">Major Chords</h1>
 
-        {#each get_notes({ low: 'C3', high: 'B3' }) as note}
-            {@const title = `${get_pitch(note)} Major Chords`}
-            <button class="block" onclick={() => {
-                const new_tab = new RackTab(get_major_chord_pianos(note), { title });
-                tabs.push(new_tab);
-                active_tab_id = new_tab.id;
-            }}>
-                {title}
-            </button>
-        {/each}
+        <ul>
+            {#each get_notes({ low: 'A3', high: 'G#4' }) as note}
+                {@const title = `${get_pitch(note)} Major Chords`}
+                <li class="mb-1 last:mb-0">
+                    <button class="w-full bg-zinc-200 rounded text-left block px-2 py-1" onclick={() => {
+                        const new_tab = new RackTab(get_major_chord_pianos(note), { title });
+                        tabs.push(new_tab);
+                        active_tab_id = new_tab.id;
+                    }}>
+                        {get_pitch(note)}
+                    </button>
+                </li>
+            {/each}
+        </ul>
     </div>
 
     <div>
-        <h1 class="text-4xl mb-4">Minor Chords</h1>
+        <h1 class="text-3xl mb-4">Minor Chords</h1>
 
-        {#each get_notes({ low: 'C3', high: 'B3' }) as note}
-            {@const title = `${get_pitch(note)} Minor Chords`}
-            <button class="block" onclick={() => {
-                const new_tab = new RackTab(get_minor_chord_pianos(note), { title });
-                tabs.push(new_tab);
-                active_tab_id = new_tab.id;
-            }}>
-                {title}
-            </button>
-        {/each}
+        <ul>
+            {#each get_notes({ low: 'A3', high: 'G#4' }) as note}
+                {@const title = `${get_pitch(note)} Minor Chords`}
+                <li class="mb-1 last:mb-0">
+                    <button class="w-full bg-zinc-200 rounded text-left block px-2 py-1" onclick={() => {
+                        const new_tab = new RackTab(get_minor_chord_pianos(note), { title });
+                        tabs.push(new_tab);
+                        active_tab_id = new_tab.id;
+                    }}>
+                        {get_pitch(note)}
+                    </button>
+                </li>
+            {/each}
+        </ul>
     </div>
 </div>

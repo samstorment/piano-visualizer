@@ -60,7 +60,7 @@
 
 <div class="flex h-dvh">
 
-    <aside class="p-4 w-64 border-r border-black">
+    <aside class="p-4 border-r border-black">
         <button class="block" onclick={() => add_page('about', 'About')}>
             About Page
         </button>
@@ -75,12 +75,13 @@
                 <div class={{ "relative rounded text-sm": true, "bg-yellow-500": active_tab_id === tab.id, "hover:bg-yellow-200": active_tab_id !== tab.id}}>
                     <button 
                         onclick={() => active_tab_id = tab.id}
-                        class={{ "pr-6 px-2 py-1 rounded": true }}
+                        class={{ "px-2 py-1 rounded": true, "pr-6": tabs.length > 1 }}
                     >
                         {tab.title}
                     </button>
                     <button 
                         class="absolute right-1 top-1/2 -translate-y-1/2 hover:bg-yellow-400 rounded"
+                        class:hidden={tabs.length === 1}
                         onclick={() => {
                             const i = tabs.findIndex(t => t.id === tab.id);
                             if (i < 0) return;

@@ -12,7 +12,6 @@ export type Pitch = `${Natural | Sharp | Flat}`;
 export type Note = `${Pitch}${Octave}`;
 export interface NoteRange { low: Note, high: Note };
 export type PitchType = 'natural' | 'flat' | 'sharp';
-export type Interval = 'major' | 'minor' | 'diminished' | 'augmented' | 'dominant';
 
 
 const MAX_PITCH_INDEX = 11;

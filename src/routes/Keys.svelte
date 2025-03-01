@@ -76,22 +76,41 @@
 </script>
 
 <div in:fly={{ y: 200 }}>
-    <header class="flex mb-2 gap-2 items-center overflow-auto">
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <header 
+        class={{ 
+            "group flex mb-1 gap-2 items-center overflow-auto cursor-pointer px-2 py-1 rounded-md  hover:outline outline-1 -outline-offset-1": true,
+            "hover:bg-zinc-100 hover:outline-zinc-300": !selected,
+            "hover:bg-yellow-500 hover:outline-black": selected
+        }}
+        onclick={() => rack.selected_id = piano.id}
+    >
         <button 
-            class={{"flex gap-2 items-center bg-white": true, "text-zinc-500": !selected }}
+            class={{
+                "flex gap-2 items-center font-bold": true, 
+                "text-zinc-500 hover:text-yellow-600": !selected,
+                "text-yellow-600 group-hover:text-inherit": selected
+            }}
             onclick={() => rack.selected_id = piano.id}
             class:selected
         >
-            {#if selected}
+            <!-- {#if selected}
                 <CircleCheck class="text-yellow-600 w-6 h-6" />
             {:else}
                 <Circle class=" w-6 h-6" />
-            {/if}
+            {/if} -->
 
-            <span class="text-lg w-8 text-left">{piano.selected_note}</span>
+            <span class="text-lg w-5 text-left">{get_pitch(piano.selected_note)}</span>
         </button>
 
-        <select class="border px-2 rounded border-zinc-500" bind:value={piano.display_id} onchange={() => piano.play_highlighted_notes()}>
+        <select 
+            class={{ 
+                "border px-2 rounded border-zinc-500": true,
+            }}
+            onclick={e => e.stopPropagation()}
+            bind:value={piano.display_id} onchange={() => piano.play_highlighted_notes()}
+        >
             {#each get_displays() as d}
                 <option value={d.id}>{d.name}</option>
             {/each}
@@ -113,7 +132,7 @@
         {/if}
     </header>
 
-    <div bind:this={keys_container_element} class="keys-container rounded-md shadow-inner shadow-zinc-500 relative flex overflow-auto p-4 scroll-smooth border-4 border-zinc-300"
+    <div bind:this={keys_container_element} class="keys-container rounded-md shadow-inner shadow-zinc-500 relative flex overflow-auto pb-3 px-2 scroll-smooth border-4 border-zinc-300"
         style="--natural-count: {naturals.length}; --accidental-count: {accidentals.length};"
         class:accidental-end={accidental_end}
         class:accidental-start={accidental_start}
@@ -212,7 +231,7 @@
     }
 
     .keys-container.selected {
-        @apply border-yellow-500 rounded;
+        @apply border-yellow-500;
     }
 
 </style>
