@@ -23,7 +23,7 @@
 
     let keys_container_element: HTMLDivElement;
 
-    let notes = $derived(get_notes(piano.range).toArray());
+    let notes = $derived(Array.from(get_notes(piano.range)));
     let naturals = $derived(notes.filter(is_natural));
     let accidentals =  $derived(notes.filter(is_accidental));
 
