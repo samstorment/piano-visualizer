@@ -3,16 +3,21 @@
 	import { get_inversions, get_pitch, type Note, type NoteRange } from "$lib/music";
 	import { type Piano } from '$lib/piano.svelte';
     import { play_note } from "$lib/sound";
-	import { ChevronLeft, ChevronRight } from "lucide-svelte";
+	import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-svelte";
 	import { fly, slide } from "svelte/transition";
 
     interface Props {
-        piano: Piano
+        piano: Piano,
+        sidebar_open: boolean
     }
 
-    let open = $state(true);
+    let { 
+        piano = $bindable(),
+        sidebar_open = $bindable()
+    }: Props = $props();
 
-    let { piano = $bindable() }: Props = $props();
+    let chords_open = $state(true);
+    let scales_open = $state(true);
 
     function display_change(display_id: DisplayId) {
         piano.display_id = display_id;
@@ -25,65 +30,86 @@
     }
 </script>
 
-
-<aside class={{ 
-    "relative bg-white border-r border-zinc-900 min-h-0": true,
-}}>
-
-    <button class="toggle absolute right-0 border translate-x-1/2 bg-white border-black rounded shadow top-4 hover:shadow z-20"
-        onclick={() => open = !open}
+{#if sidebar_open}
+    <aside 
+        class={{ 
+            "relative bg-white border-r border-zinc-900 min-h-0 flex flex-col overflow-auto": true,
+            "min-w-60": sidebar_open
+        }}
     >
-        <span class="sr-only">Toggle Sidebar</span>
-        {#if open}
-            <ChevronLeft />
-        {:else}
-            <ChevronRight />
-        {/if}
-    </button>
 
-    {#if open}
-        <div class="sticky top-0 overflow-auto shrink-0 flex flex-col gap-3 h-full p-4 w-[200px]">
-            {@render display_button(DisplayId.NOTE)}
+        <div class="flex justify-between items-center font-bold px-2 py-2">
+            <button onclick={() => display_change(piano.display_id)} class="text-left" class:hidden={!sidebar_open}>
+                {get_pitch(piano.selected_note)} {piano.display.name}
+            </button>
 
-            {@render display_button(DisplayId.MAJOR_SCALE)}
-            {@render display_button(DisplayId.MINOR_SCALE)}
-
-            {@render display_button(DisplayId.MAJOR_CHORD)}
-            {@render display_button(DisplayId.MINOR_CHORD)}
-            {@render display_button(DisplayId.DIMINISHED_CHORD)}
-            {@render display_button(DisplayId.AUGMENTED_CHORD)}
-            {@render display_button(DisplayId.SUS2_CHORD)}
-            {@render display_button(DisplayId.SUS4_CHORD)}
-            {@render display_button(DisplayId.MAJOR7_CHORD)}
-            {@render display_button(DisplayId.MINOR7_CHORD)}
-            {@render display_button(DisplayId.DOMINANT7_CHORD)}
-            {@render display_button(DisplayId.DIMINISHED7_CHORD)}
+            <!-- <button class="toggle border bg-white border-black rounded shadow top-4 hover:shadow"
+                onclick={() => open = !open}
+            >
+                <span class="sr-only">Toggle Sidebar</span>
+                {#if open}<ChevronLeft />{:else}<ChevronRight />{/if}
+            </button> -->
         </div>
-    {:else}
-        <div class="w-4"></div>
-    {/if}
 
-</aside>
+        <div class="shadow-inner bg-zinc-100 p-2"></div>
+
+        <details bind:open={chords_open}>
+            <summary class="cursor-pointer flex justify-between hover:bg-zinc-200 items-center px-2 py-2 font-bold border-b">
+                <span>Scales</span>
+                {#if chords_open}<ChevronRight />{:else}<ChevronDown />{/if}
+            </summary>
+            <div class="flex flex-col gap-1 p-2 border-b shadow-inner bg-zinc-100">
+                {@render display_button(DisplayId.MAJOR_SCALE)}
+                {@render display_button(DisplayId.MINOR_SCALE)}
+            </div>
+        </details>
+
+        <details bind:open={scales_open}>
+            <summary class="cursor-pointer flex justify-between hover:bg-zinc-200 items-center px-2 py-2 font-bold border-b">
+                <span>Chords</span>
+                {#if scales_open}<ChevronRight />{:else}<ChevronDown />{/if}
+            </summary>
+            <div class="flex flex-col gap-1 p-2 border-b shadow-inner bg-zinc-100">
+                {@render display_button(DisplayId.MAJOR_CHORD)}
+                {@render display_button(DisplayId.MINOR_CHORD)}
+                {@render display_button(DisplayId.DIMINISHED_CHORD)}
+                {@render display_button(DisplayId.AUGMENTED_CHORD)}
+                {@render display_button(DisplayId.SUS2_CHORD)}
+                {@render display_button(DisplayId.SUS4_CHORD)}
+                {@render display_button(DisplayId.MAJOR7_CHORD)}
+                {@render display_button(DisplayId.MINOR7_CHORD)}
+                {@render display_button(DisplayId.DOMINANT7_CHORD)}
+                {@render display_button(DisplayId.DIMINISHED7_CHORD)}
+            </div>
+        </details>
+    </aside>
+{/if}
+
 
 {#snippet display_button(display_id: DisplayId)}
     {@const display = get_display(display_id)}
     {@const highlighted = piano.display_id === display_id}
     <button 
         onclick={() => display_change(display_id)}
-        class:highlighted
-        class="display"
+        class={{ 
+            "text-left border-l-4 border-transparent p-1 rounded hover:bg-yellow-500": true, 
+            "bg-yellow-500": highlighted
+        }}
     >
         {display.name}
     </button>
     {#if highlighted && piano.inversions.length > 0 && piano.display.type === 'chord'}
-        <div class="text-sm pl-4">
-            <p class="text-sm italic mb-1.5">Inversions</p>
+        <div class="text-sm p-2 border rounded shadow-inner bg-white">
+            <p class="italic mb-1.5">Inversions</p>
             <ul class="flex gap-2">
                 {#each piano.inversions as _, i}
                     <li>
                         <button 
-                            class="inversion border border-black rounded-full w-7 h-7" 
-                            class:highlighted={i === piano.inversion}
+                            class={{ 
+                                "rounded-full w-7 h-7": true,
+                                "bg-zinc-100": i !== piano.inversion,
+                                "bg-yellow-500": i === piano.inversion
+                            }} 
                             onclick={() => inversion_click(i)}
                         >
                             {i}
@@ -97,31 +123,7 @@
 
 
 <style lang="postcss">
-    button.display {
-        @apply border px-2 py-1 border-zinc-500 rounded-sm w-full hover:bg-zinc-100 rounded-r-lg;
-        box-shadow: -.25rem .25rem black;
-
-        &:active {
-            translate: -.125rem .125rem;
-            box-shadow: -.125rem .125rem black;
-        }
-        
-        &.highlighted {
-            @apply bg-yellow-500;
-        } 
-    }
-
-    button.toggle {
-        box-shadow: -.125rem .125rem black;
-
-        &:active {
-            translate: -.06rem .06rem;
-            box-shadow: -.06rem .06rem black;
-        }
-
-    }
-
-    .inversion.highlighted {
-        @apply bg-yellow-500;
+    summary {
+        list-style-type: none;
     }
 </style>

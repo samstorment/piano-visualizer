@@ -1,18 +1,27 @@
 <script lang="ts">
 	import { key_counts } from "$lib/piano.svelte";
 	import type { Rack } from "$lib/rack.svelte";
-	import { Plus } from "lucide-svelte";
+	import { ChevronLeft, ChevronRight, Plus } from "lucide-svelte";
 
     interface Props {
-        rack: Rack
+        rack: Rack,
+        sidebar_open: boolean
     }
 
     let { 
-        rack = $bindable() 
+        rack = $bindable(),
+        sidebar_open = $bindable()
     }: Props = $props();
 </script>
 
 <footer class="flex gap-2 items-center p-2 border-t border-black bg-white mt-auto overflow-auto z-50">
+
+    <button class="toggle border bg-white border-black rounded shadow top-4 hover:shadow"
+        onclick={() => sidebar_open = !sidebar_open}
+    >
+        <span class="sr-only">Toggle Sidebar</span>
+        {#if sidebar_open}<ChevronLeft />{:else}<ChevronRight />{/if}
+    </button>
 
     <select 
         name="keyboard-size" 

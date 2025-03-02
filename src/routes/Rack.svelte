@@ -9,6 +9,8 @@
         rack: Rack
     }
 
+    let sidebar_open = $state(true);
+
     let { 
         rack = $bindable() 
     }: Props = $props();
@@ -16,7 +18,7 @@
 
 <div class="flex flex-col h-full">
     <div class="flex flex-1 min-h-0">
-        <Sidebar bind:piano={rack.selected_piano} />
+        <Sidebar bind:piano={rack.selected_piano} bind:sidebar_open />
         <div class="flex-1 overflow-auto">
             <div class={{ "max-w-fit": true, "mx-auto": rack.alignment === "center", "ml-auto": rack.alignment === "right" }}>
                 <ul 
@@ -37,5 +39,5 @@
             </div>
         </div>
     </div>
-    <Footer bind:rack />
+    <Footer bind:rack bind:sidebar_open />
 </div>

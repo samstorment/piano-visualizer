@@ -19,8 +19,6 @@
         rack = $bindable() 
     }: Props = $props();
 
-    let key_column = 1;
-
     let keys_container_element: HTMLDivElement;
 
     let notes = $derived(Array.from(get_notes(piano.range)));
@@ -80,9 +78,7 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <header 
         class={{ 
-            "group flex mb-1 gap-2 items-center overflow-auto cursor-pointer px-2 py-1 rounded-md  hover:outline outline-1 -outline-offset-1": true,
-            "hover:bg-zinc-100 hover:outline-zinc-300": !selected,
-            "hover:bg-yellow-500 hover:outline-black": selected
+            "group flex mb-1 gap-2 items-center overflow-auto cursor-pointer px-2 py-1 rounded-md  hover:outline outline-1 -outline-offset-1 hover:bg-zinc-100 hover:outline-zinc-300": true,
         }}
         onclick={() => rack.selected_id = piano.id}
     >
@@ -90,7 +86,7 @@
             class={{
                 "flex gap-2 items-center font-bold": true, 
                 "text-zinc-500 hover:text-yellow-600": !selected,
-                "text-yellow-600 group-hover:text-inherit": selected
+                "text-yellow-600": selected
             }}
             onclick={() => rack.selected_id = piano.id}
             class:selected
