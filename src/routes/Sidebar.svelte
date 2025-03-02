@@ -100,7 +100,7 @@
     </button>
     {#if highlighted && piano.inversions.length > 0 && piano.display.type === 'chord'}
         <div class="text-sm p-2 border rounded shadow-inner bg-white">
-            <p class="italic mb-1.5">Inversions</p>
+            <p class="mb-1">Inversions</p>
             <ul class="flex gap-2">
                 {#each piano.inversions as _, i}
                     <li>

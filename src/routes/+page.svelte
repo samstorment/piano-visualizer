@@ -1,7 +1,7 @@
 <script lang="ts">
     import { create_rack, type Rack } from "$lib/rack.svelte";
 	import RackComponent from "./Rack.svelte";
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
 	import { create_piano } from "$lib/piano.svelte";
 	import { browser } from "$app/environment";
 	import { RackTab, PageTab, type Tab, type TabPage } from "$lib/tab.svelte";
@@ -16,19 +16,25 @@
     let active_tab = $derived(tabs.find(t => t.id === active_tab_id));
     let active_page = $derived(active_tab?.type === "page" ? active_tab : undefined);
     let active_rack = $derived(active_tab?.type === "rack" ? active_tab : undefined);
-
+    let tab_bar_element: HTMLElement;
 
     function add_page(page: TabPage, title: string) {
         const existing_about_tab = tabs.find(t => t.type === 'page' && t.page === page);
 
         if (existing_about_tab) {
             active_tab_id = existing_about_tab.id;
+            scroll_to_active_tab_button();
             return;
         }
 
         const new_tab = new PageTab(page, { title }); 
         tabs.push(new_tab); 
         active_tab_id = new_tab.id 
+    }
+
+
+    function scroll_to_active_tab_button() {
+        tick().then(() => document.getElementById(`tab-button-${active_tab_id}`)?.scrollIntoView({ inline: 'center', behavior: 'smooth' }))
     }
 
     // load rack saved in local storage
@@ -89,47 +95,52 @@
     </aside>
 
     <main class="flex flex-col flex-1 min-w-0">
-        <header class="p-1 flex gap-1 items-center overflow-auto shrink border-b border-black">
-            {#each tabs as tab, i (tab)}
-                {@const active = active_tab_id === tab.id}
-                <div class={{ 
-                        "relative rounded text-sm flex-1 max-w-40": true, 
-                        "bg-yellow-500": active, 
-                        "hover:bg-zinc-200": !active
-                    }} 
-                    in:slide={{ axis: 'x', duration: 200 }} 
-                    animate:flip={{ duration: 100 }}
-                >
-                    <button 
-                        onclick={() => active_tab_id = tab.id}
-                        class={{ "px-2 py-1 rounded pr-8 w-full text-left": true }}
-                    >
-                        {tab.title}
-                    </button>
-                    <button 
+        <header bind:this={tab_bar_element} class="flex gap-1 items-center shrink border-b border-black px-1">
+            <ul class="overflow-auto flex gap-1 py-1">
+                {#each tabs as tab, i (tab)}
+                    {@const active = active_tab_id === tab.id}
+                    <li 
+                        id="tab-button-{tab.id}"
                         class={{ 
-                            "absolute p-0.5 right-1.5 top-1/2 -translate-y-1/2 rounded": true,  
-                            "hover:bg-white/30": true 
-                        }}
-
-                        onclick={() => {
-                            const i = tabs.findIndex(t => t.id === tab.id);
-                            if (i < 0) return;
-
-                            if (tab.id === active_tab_id) {
-                                if (i < tabs.length - 1) active_tab_id = tabs[i + 1].id;
-                                else if (tabs.length > 1) active_tab_id = tabs[i - 1].id;
-                            }
-
-                            tabs.splice(i, 1);
-                        }}
+                            "relative rounded text-sm": true, 
+                            "bg-yellow-500": active, 
+                            "hover:bg-zinc-200": !active
+                        }} 
+                        in:slide={{ axis: 'x', duration: 100 }} 
+                        animate:flip={{ duration: 100 }}
+                        onintroend={() => scroll_to_active_tab_button()}
                     >
-                        <X class="w-4 h-4" />
-                    </button>
-                </div>
-            {/each}
-            <button class="px-1 py-1 hover:bg-zinc-200 rounded"
-                 onclick={() => { const new_tab =  new RackTab(); tabs.push(new_tab); active_tab_id = new_tab.id }}>
+                        <button 
+                            onclick={() => { active_tab_id = tab.id; }}
+                            class={{ "px-2 py-1 rounded pr-8 w-full text-left text-nowrap": true }}
+                        >
+                            {tab.title}
+                        </button>
+                        <button 
+                            class={{ 
+                                "absolute p-0.5 right-1.5 top-1/2 -translate-y-1/2 rounded hover:bg-white/30": true,  
+                            }}
+                            onclick={() => {
+                                const i = tabs.findIndex(t => t.id === tab.id);
+                                if (i < 0) return;
+
+                                if (tab.id === active_tab_id) {
+                                    if (i < tabs.length - 1) active_tab_id = tabs[i + 1].id;
+                                    else if (tabs.length > 1) active_tab_id = tabs[i - 1].id;
+                                }
+
+                                tabs.splice(i, 1);
+                            }}
+                        >
+                            <X class="w-4 h-4" />
+                        </button>
+                    </li>
+                {/each}
+            </ul>
+            <button 
+                class="p-1 hover:bg-zinc-200 rounded"
+                onclick={() => { const new_tab =  new RackTab(); tabs.push(new_tab); active_tab_id = new_tab.id }}
+            >
                 <span class="sr-only">Add New Tab</span>
                 <Plus />
             </button>
@@ -140,11 +151,13 @@
             {:else if active_tab.type === 'rack'}
                 <RackComponent bind:rack={active_tab.rack} />
             {:else if active_tab.type === 'page'}
-                {#if active_tab.page === 'about'}
-                    <About />
-                {:else if active_tab.page === 'presets'}
-                    <Presets bind:tabs bind:active_tab_id />
-                {/if}
+                <div class="h-full overflow-auto">
+                    {#if active_tab.page === 'about'}
+                        <About />
+                    {:else if active_tab.page === 'presets'}
+                        <Presets bind:tabs bind:active_tab_id />
+                    {/if}
+                </div>
             {/if}   
         </section>
     </main>
