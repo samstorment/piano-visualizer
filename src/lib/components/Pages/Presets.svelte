@@ -24,7 +24,7 @@
                 let display_id = DisplayId.MAJOR_CHORD;
                 if (i === 1 || i === 2 || i === 5) display_id = DisplayId.MINOR_CHORD;
                 if (i === 6) display_id = DisplayId.DIMINISHED_CHORD;
-                return create_piano({ selected_note: note, display_id, key_count, locked: true });
+                return create_piano({ selected_note: note, display_id, key_count });
             });
 
             return create_rack({ 
@@ -47,7 +47,7 @@
                 let display_id = DisplayId.MAJOR_CHORD;
                 if (i === 0 || i === 3 || i === 4) display_id = DisplayId.MINOR_CHORD;
                 if (i === 1) display_id = DisplayId.DIMINISHED_CHORD;
-                return create_piano({ selected_note: note, display_id, key_count, locked: true });
+                return create_piano({ selected_note: note, display_id, key_count });
             });
 
         return create_rack({ 
