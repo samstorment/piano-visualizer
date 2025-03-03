@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { key_counts } from "$lib/piano.svelte";
-	import type { Rack } from "$lib/rack.svelte";
+	import { key_counts } from "$lib/stores/piano.svelte";
+	import type { Rack } from "$lib/stores/rack.svelte";
 	import { ChevronLeft, ChevronRight, Plus } from "lucide-svelte";
 
     interface Props {
@@ -53,6 +53,7 @@
         <option value="left">Left</option>
         <option value="center">Center</option>
         <option value="right">Right</option>
+        <option value="stretch">Stretch</option>
     </select>
 
     <button 

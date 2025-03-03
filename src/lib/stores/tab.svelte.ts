@@ -1,4 +1,4 @@
-import { create_rack, type Rack } from "$lib/rack.svelte";
+import { create_rack, type Rack } from "$lib/stores/rack.svelte";
 
 export type TabId = ReturnType<typeof crypto.randomUUID>;
 
@@ -25,12 +25,15 @@ abstract class BaseTab<T extends TabType> {
 export class RackTab extends BaseTab<"rack"> {
 
     readonly type = "rack";
-    rack: Rack;
+    #rack?: Rack = $state<Rack>();
 
     constructor(rack: Rack = create_rack(), props: CreateTabProps = {}) {
         super(props);
-        this.rack = rack;
+        this.#rack = rack;
     }
+
+    get rack() { return this.#rack! }
+    set rack(v) { this.#rack = v }
 }
 
 export type TabPage = 'about' | 'presets' | 'settings';

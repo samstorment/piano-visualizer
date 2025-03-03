@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { DisplayId, get_display } from "$lib/display";
-	import { get_inversions, get_pitch, type Note, type NoteRange } from "$lib/music";
-	import { type Piano } from '$lib/piano.svelte';
-    import { play_note } from "$lib/sound";
-	import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-svelte";
-	import { fly, slide } from "svelte/transition";
+	import { DisplayId, get_display, get_display_notes } from "$lib/display";
+	import { get_inversions, get_pitch } from "$lib/music";
+	import { play_note } from "$lib/sound";
+	import { type Piano } from '$lib/stores/piano.svelte';
+	import { ChevronDown, ChevronRight } from "lucide-svelte";
+	import { fly } from "svelte/transition";
 
     interface Props {
         piano: Piano,
@@ -20,11 +20,23 @@
     let scales_open = $state(true);
 
     function display_change(display_id: DisplayId) {
+        if (piano.locked) {
+            const notes = get_display_notes(piano.selected_note, display_id);
+            notes.forEach(n => play_note(n));
+            return;
+        }
+
         piano.display_id = display_id;
         piano.play_highlighted_notes();
     }
 
     function inversion_click(inversion: number) {
+        if (piano.locked) {
+            const notes = get_display_notes(piano.selected_note, piano.display_id);
+            get_inversions(notes)[inversion]?.forEach(n => play_note(n));
+            return;
+        }
+
         piano.inversion = inversion;
         piano.play_highlighted_notes();
     }

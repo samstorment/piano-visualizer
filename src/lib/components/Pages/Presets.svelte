@@ -1,25 +1,22 @@
 <script lang="ts">
 	import { DisplayId } from "$lib/display";
 	import { get_major_key, get_minor_key, get_notes, get_pitch, type Note } from "$lib/music";
-	import { create_piano, type KeyCount } from "$lib/piano.svelte";
-	import { create_rack, type RackAlignment } from "$lib/rack.svelte";
-	import { RackTab, type Tab, type TabId } from "$lib/tab.svelte";
+	import type { Editor } from "$lib/stores/editor.svelte";
+	import { create_piano, type KeyCount } from "$lib/stores/piano.svelte";
+	import { create_rack, type RackAlignment } from "$lib/stores/rack.svelte";
 
-    
     interface Props {
-        tabs: Tab[],
-        active_tab_id: TabId
+        editor: Editor
     }
 
     let { 
-        tabs = $bindable(), 
-        active_tab_id = $bindable()
+        editor = $bindable()
     }: Props = $props();
 
     const key_count: KeyCount = 49;
     const alignment: RackAlignment = 'center';
 
-    function get_major_chord_pianos(note: Note) {
+    function get_major_chord_rack(note: Note) {
 
         const pianos = get_major_key(note)
             .slice(0, -1)
@@ -27,23 +24,43 @@
                 let display_id = DisplayId.MAJOR_CHORD;
                 if (i === 1 || i === 2 || i === 5) display_id = DisplayId.MINOR_CHORD;
                 if (i === 6) display_id = DisplayId.DIMINISHED_CHORD;
-                return create_piano({ selected_note: note, display_id, key_count });
+                return create_piano({ selected_note: note, display_id, key_count, locked: true });
             });
 
-        return create_rack({ columns: 2, key_count, pianos, alignment });
+            return create_rack({ 
+            columns: 2, 
+            key_count, 
+            pianos, 
+            alignment, 
+            context: { 
+                display_id: DisplayId.MAJOR_CHORD, 
+                note, 
+                name: `${get_pitch(note)} Major Chords` } 
+            }
+        );
     }
 
-    function get_minor_chord_pianos(note: Note) {
+    function get_minor_chord_rack(note: Note) {
         const pianos = get_minor_key(note)
             .slice(0, -1)
             .map((note, i) => {
                 let display_id = DisplayId.MAJOR_CHORD;
                 if (i === 0 || i === 3 || i === 4) display_id = DisplayId.MINOR_CHORD;
                 if (i === 1) display_id = DisplayId.DIMINISHED_CHORD;
-                return create_piano({ selected_note: note, display_id, key_count });
+                return create_piano({ selected_note: note, display_id, key_count, locked: true });
             });
 
-        return create_rack({ columns: 2, key_count, pianos, alignment });
+        return create_rack({ 
+            columns: 2, 
+            key_count, 
+            pianos, 
+            alignment, 
+            context: { 
+                display_id: DisplayId.MINOR_CHORD, 
+                note, 
+                name: `${get_pitch(note)} Minor Chords` } 
+            }
+        );
     }
 </script>
 
@@ -56,11 +73,10 @@
             {#each get_notes({ low: 'A3', high: 'G#4' }) as note}
                 {@const title = `${get_pitch(note)} Major Chords`}
                 <li class="mb-1 last:mb-0">
-                    <button class="w-full bg-zinc-200 rounded text-left block px-2 py-1" onclick={() => {
-                        const new_tab = new RackTab(get_major_chord_pianos(note), { title });
-                        tabs.push(new_tab);
-                        active_tab_id = new_tab.id;
-                    }}>
+                    <button 
+                        class="w-full bg-zinc-200 rounded text-left block px-2 py-1" 
+                        onclick={() => editor.add_rack_tab(get_major_chord_rack(note), title)}
+                    >
                         {get_pitch(note)}
                     </button>
                 </li>
@@ -75,11 +91,10 @@
             {#each get_notes({ low: 'A3', high: 'G#4' }) as note}
                 {@const title = `${get_pitch(note)} Minor Chords`}
                 <li class="mb-1 last:mb-0">
-                    <button class="w-full bg-zinc-200 rounded text-left block px-2 py-1" onclick={() => {
-                        const new_tab = new RackTab(get_minor_chord_pianos(note), { title });
-                        tabs.push(new_tab);
-                        active_tab_id = new_tab.id;
-                    }}>
+                    <button 
+                        class="w-full bg-zinc-200 rounded text-left block px-2 py-1" 
+                        onclick={() => editor.add_rack_tab(get_minor_chord_rack(note), title)}
+                    >
                         {get_pitch(note)}
                     </button>
                 </li>

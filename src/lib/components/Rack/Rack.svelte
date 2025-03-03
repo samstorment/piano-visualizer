@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { Rack } from "$lib/rack.svelte";
 	import { flip } from "svelte/animate";
-	import Keys from "./Keys.svelte";
 	import Sidebar from "./Sidebar.svelte";
 	import Footer from "./Footer.svelte";
+	import Piano from "$lib/components/Piano/Piano.svelte";
+	import type { Rack } from "$lib/stores/rack.svelte";
+	import Context from "./Context.svelte";
 
     interface Props {
         rack: Rack
@@ -20,7 +21,7 @@
     <div class="flex flex-1 min-h-0">
         <Sidebar bind:piano={rack.selected_piano} bind:sidebar_open />
         <div class="flex-1 overflow-auto">
-            <div class={{ "max-w-fit": true, "mx-auto": rack.alignment === "center", "ml-auto": rack.alignment === "right" }}>
+            <div class={{ "max-w-fit": rack.alignment !== 'stretch', "mx-auto": rack.alignment === "center", "ml-auto": rack.alignment === "right" }}>
                 <ul 
                     class={{
                         "grid gap-4 p-4": true,
@@ -32,12 +33,13 @@
                 >
                     {#each rack.pianos as p, i (p)}
                         <li animate:flip={{ duration: 200 }}>
-                            <Keys bind:piano={rack.pianos[i]} bind:rack />
+                            <Piano bind:piano={rack.pianos[i]} bind:rack />
                         </li>
                     {/each}
                 </ul>
             </div>
         </div>
+        <Context bind:rack />
     </div>
     <Footer bind:rack bind:sidebar_open />
 </div>

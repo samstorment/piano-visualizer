@@ -14,6 +14,9 @@ export interface NoteRange { low: Note, high: Note };
 export type PitchType = 'natural' | 'flat' | 'sharp';
 
 
+export type Chord = 'major' | 'minor' | 'diminished' | 'augmented' | 'dominant7' | 'diminished7' | 'sus2' | 'sus4' | 'major7' | 'minor7'; 
+export type Scale = 'major' | 'minor';
+
 const MAX_PITCH_INDEX = 11;
 const MAX_OCTAVE = 8;
 

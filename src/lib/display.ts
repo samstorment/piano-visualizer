@@ -1,6 +1,6 @@
+import { get_augmented_triad, get_diminished_7, get_diminished_triad, get_dominant_7, get_major_7, get_major_key, get_major_triad, get_minor_7, get_minor_key, get_minor_triad, get_sus_2, get_sus_4, type Chord, type Note, type Scale } from "./music";
+
 type DisplayType = 'note' | 'chord' | 'scale';
-type ChordStyle = 'major' | 'minor' | 'diminished' | 'augmented' | 'dominant7' | 'diminished7' | 'sus2' | 'sus4' | 'major7' | 'minor7'; 
-type ScaleStyle = 'major' | 'minor';
 
 interface IDisplay {
     type: DisplayType;
@@ -14,13 +14,13 @@ interface INoteDisplay extends IDisplay {
 
 interface IChordDisplay extends IDisplay {
     type: 'chord';
-    style: ChordStyle;
+    style: Chord;
     inversion: number;
 }
 
 interface IScaleDisplay extends IDisplay {
     type: 'scale';
-    style: ScaleStyle;
+    style: Scale;
 }
 
 export enum DisplayId {
@@ -75,4 +75,25 @@ export function get_display(display: DisplayId) {
 
 export function get_displays() {
     return Object.entries(display_types).map(([ _, v ]) => v);
+}
+
+export function get_display_notes(note: Note, display: DisplayId) {
+    if (!note) return [];
+    if (display === DisplayId.NOTE) return [ note ];
+
+    if (display === DisplayId.MAJOR_SCALE) return get_major_key(note);
+    if (display === DisplayId.MINOR_SCALE) return get_minor_key(note);
+    
+    if (display === DisplayId.MAJOR_CHORD) return get_major_triad(note);
+    if (display === DisplayId.MINOR_CHORD) return get_minor_triad(note);
+    if (display === DisplayId.AUGMENTED_CHORD) return get_augmented_triad(note);
+    if (display === DisplayId.DIMINISHED_CHORD) return get_diminished_triad(note);
+    if (display === DisplayId.SUS2_CHORD) return get_sus_2(note);
+    if (display === DisplayId.SUS4_CHORD) return get_sus_4(note);
+    if (display === DisplayId.MAJOR7_CHORD) return get_major_7(note);
+    if (display === DisplayId.MINOR7_CHORD) return get_minor_7(note);
+    if (display === DisplayId.DOMINANT7_CHORD) return get_dominant_7(note);
+    if (display === DisplayId.DIMINISHED7_CHORD) return get_diminished_7(note);
+    
+    return [];
 }
