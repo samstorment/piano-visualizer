@@ -56,10 +56,19 @@
         <option value="stretch">Stretch</option>
     </select>
 
+
+
+    <label class="border rounded-l border-zinc-500 overflow-hidden bg-zinc-200">
+        <span class=" px-2">Key Size</span>
+        <input type="number" min="70" max="300" bind:value={rack.key_size} class="border-l border-zinc-500 pl-2">
+    </label>
+
+
     <button 
         class="border rounded px-2 border-yellow-900 bg-yellow-500 whitespace-nowrap flex items-center gap-2"
         onclick={() => rack.add_piano()}
     >
         Add Piano <Plus />
     </button>
+
 </footer>

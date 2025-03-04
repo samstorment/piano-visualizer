@@ -5,6 +5,7 @@
 	import { Editor } from "$lib/stores/editor.svelte";
 	import IconBar from "../lib/components/IconBar/IconBar.svelte";
 	import TabBar from "./TabBar.svelte";
+	import Settings from "$lib/components/Pages/Settings.svelte";
 
     let editor = $state(new Editor());
 </script>
@@ -30,6 +31,8 @@
                                     <About />
                                 {:else if tab.page === 'presets'}
                                     <Presets bind:editor />
+                                {:else if tab.page === 'settings'}
+                                    <Settings />
                                 {/if}
                             {/if}  
                         </div>
@@ -41,3 +44,4 @@
         </main>
     </div>
 </div>
+

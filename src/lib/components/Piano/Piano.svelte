@@ -17,9 +17,10 @@
     }: Props = $props();
 
     let selected = $derived(rack.selected_id === piano.id);
+    let stretch = $derived(rack.alignment === 'stretch');
 </script>
 
 <div in:fly={{ y: 200 }}>
     <Header bind:piano bind:rack {selected} />
-    <Keys bind:piano bind:rack {selected} />
+    <Keys bind:piano {selected} {stretch} on_note_click={() => rack.selected_id === piano.id} />
 </div>

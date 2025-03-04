@@ -1,6 +1,7 @@
 import type { DisplayId } from "$lib/display";
 import type { Note } from "$lib/music";
 import { create_piano, type KeyCount as KeyCount, type CreatePianoProps, type Piano, type PianoID } from "./piano.svelte";
+import { settings } from "./settings.svelte";
 
 
 export type RackAlignment = 'left' | 'center' | 'right' | 'stretch';
@@ -16,15 +17,17 @@ export interface CreateRackProps {
     alignment?: RackAlignment,
     columns?: RackColumns,
     key_count?: KeyCount,
+    key_size?: number,
     pianos?: Piano[],
     selected_id?: PianoID,
     context?: RackContext
 }
 
 export function create_rack({
-    alignment = 'left',
-    columns = 1,
-    key_count = 32,
+    alignment = settings.rack.alignment,
+    columns = settings.rack.columns,
+    key_count = settings.piano.key_count,
+    key_size = settings.piano.key_size,
     pianos = [ create_piano({ key_count }) ],
     selected_id = pianos[0]?.id,
     context = undefined
@@ -33,6 +36,7 @@ export function create_rack({
     let _pianos = $state(pianos);
     let _selected_id = $state(selected_id);
     let _key_count = $state(key_count);
+    let _key_size = $state(key_size);
     let _columns = $state(columns);
     let _alignment = $state(alignment);
 
@@ -47,12 +51,17 @@ export function create_rack({
             _key_count = value;
             _pianos.forEach(p => p.key_count = value)
         },
+        get key_size() { return _key_size },
+        set key_size(value) {
+            _key_size = value;
+            _pianos.forEach(p => p.key_size = value)
+        },
         get columns() { return _columns },
         set columns(value) { _columns = value },
         get alignment() { return _alignment },
         set alignment(value) { _alignment = value },
         get context() { return context },
-        add_piano(props: CreatePianoProps = { key_count: _key_count }) {
+        add_piano(props: CreatePianoProps = { key_count: _key_count, key_size: _key_size }) {
             const piano = create_piano(props);
             _pianos.push(create_piano(props));
             return piano;

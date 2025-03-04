@@ -1,6 +1,7 @@
-import { get_augmented_triad, get_diminished_7, get_diminished_triad, get_dominant_7, get_inversions, get_major_7, get_major_key, get_major_triad, get_minor_7, get_minor_key, get_minor_triad, get_sus_2, get_sus_4, type Note, type NoteRange } from "$lib/music";
+import { get_inversions, type Note, type NoteRange } from "$lib/music";
 import { DisplayId, get_display, get_display_notes } from "$lib/display";
 import { play_note } from "$lib/sound";
+import { settings } from "./settings.svelte";
 
 export const key_counts = [ 25, 32, 37, 49, 61, 76, 88 ] as const;
 
@@ -22,25 +23,25 @@ export interface CreatePianoProps {
     display_id?: DisplayId;
     // range?: NoteRange,
     key_count?: KeyCount;
+    key_size?: number; 
     selected_note?: Note;
     id?: PianoID;
     inversion?: number;
-    locked?: boolean;
 }
 
 export function create_piano({
-    display_id = DisplayId.NOTE,
-    key_count = 88,
+    display_id = settings.piano.display_id,
+    key_count = settings.piano.key_count,
+    key_size = settings.piano.key_size,
     selected_note = 'C4',
     id = crypto.randomUUID(),
     inversion = 0,
-    locked = false
 }: CreatePianoProps = {}) {
     let _display_id = $state(display_id);
     let _selected_note = $state(selected_note);
     let _key_count = $state(key_count);
     let _inversion = $state(inversion);
-    let _locked = $state(locked);
+    let _key_size = $state(key_size);
 
     return {
         get display_id() { return _display_id },
@@ -57,6 +58,13 @@ export function create_piano({
             return d;
         },
 
+        get key_size() { return _key_size; },
+        set key_size(val) { 
+            if (val < 70) val = 70;
+            if (val > 300) val = 300;
+            _key_size = val; 
+        },
+
         get range() { 
             return note_ranges[_key_count];
         },
@@ -68,9 +76,6 @@ export function create_piano({
         },
 
         get id() { return id },
-
-        get locked() { return _locked },
-        set locked(val) { _locked = val },
 
         // get the notes using our selected note as the root
         get root_notes(): Note[] {

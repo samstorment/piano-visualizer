@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Editor } from "$lib/stores/editor.svelte";
 	import type { TabPage } from "$lib/stores/tab.svelte";
-	import { Info, Piano as PianoIcon } from "lucide-svelte";
+	import { Cog, Info, Piano as PianoIcon, Settings } from "lucide-svelte";
 	import IconButton from "./IconButton.svelte";
 
     interface Props {
@@ -20,5 +20,9 @@
 
     <IconButton {editor} page="about" title="About" class="mt-auto">
         <Info class="w-6 h-6" />
+    </IconButton>
+
+    <IconButton {editor} page="settings" title="Settings" >
+        <Settings class="w-6 h-6" />
     </IconButton>
 </aside>

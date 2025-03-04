@@ -3,19 +3,20 @@
 	import { get_notes, get_pitch, is_accidental, is_natural, type Note } from "$lib/music";
 	import { play_note } from "$lib/sound";
 	import type { Piano } from "$lib/stores/piano.svelte";
-	import type { Rack } from "$lib/stores/rack.svelte";
 	import { onMount } from "svelte";
 
     interface Props {
-        rack: Rack,
         piano: Piano,
-        selected: boolean
+        stretch: boolean,
+        selected: boolean,
+        on_note_click?: (note: Note) => void
     }
 
     let { 
         piano = $bindable(), 
-        rack = $bindable(),
-        selected
+        selected,
+        stretch,
+        on_note_click
     }: Props = $props();
 
     let keys_container_element: HTMLDivElement;
@@ -33,15 +34,8 @@
     });
 
     function handleNoteClick(note: Note) {
-        if (piano.locked) {
-            const notes = get_display_notes(note, piano.display_id);
-            notes.forEach(n => play_note(n));
-            rack.selected_id = piano.id;
-            return;
-        }
-
         piano.selected_note = note;
-        rack.selected_id = piano.id;
+        on_note_click && on_note_click(note);
         piano.play_highlighted_notes();
     }
 
@@ -82,16 +76,18 @@
     class:accidental-start={accidental_start}
     class:selected
 >
-    <div class="keys" class:w-full={rack.alignment === 'stretch'}>
+    <div class="keys" class:w-full={stretch} style="--height-white: {piano.key_size}px;">
         {#each notes as n, i}
+            {@const white = is_natural(n)}
+            {@const black = is_accidental(n)}
             <button 
                 onclick={() => handleNoteClick(n)}
                 class="key white border border-zinc-800 flex items-end justify-center shrink-0 pb-2 px-1 rounded-b-lg shadow-md"
                 class:highlighted={piano.highlighted_notes.includes(n)}
-                class:white={is_natural(n)}
-                class:black={is_accidental(n)}
+                class:white
+                class:black
                 data-note={n}
-                style="--key-column: {natural_columns[i]};"
+                style="--key-column: {natural_columns[i]}; {stretch ? "--min-width-white: 100%" : ""}"
             >   
                 {get_pitch(n)}
             </button>
@@ -110,6 +106,7 @@
 
         --height-white: 125px;
         --min-width-white: 35px;
+        --width-white: calc(var(--height-white) * (1/4));
 
         --height-black: calc(var(--height-white) * .65);
         --min-width-black: calc(var(--min-width-white) * .75);
@@ -117,11 +114,14 @@
     }
 
     .key {
-        transition: scale ease-in-out 100ms, padding ease-in-out 100ms, font-size ease-in-out 100ms;
+        /* font-size: .9rem; */
+        font-size: max(calc(var(--width-white) * .45), 1rem);
+
+        /* transition: scale ease-in-out 100ms, padding ease-in-out 100ms, font-size ease-in-out 100ms; */
         box-shadow: 0 5px 1px rgba(32,32,32,0.2);
 
         &:active {
-            @apply text-sm;
+            font-size: max(calc(var(--width-white) * .35), .8rem);
             box-shadow: none;
             scale: 1 1.03;
             padding-bottom: .75rem;
@@ -133,6 +133,7 @@
         grid-row: 1;
         min-width: var(--min-width-white);
         height: var(--height-white);
+        width: var(--width-white);
 
         &:is(:hover, :focus-visible) {
             @apply bg-zinc-200;

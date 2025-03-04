@@ -56,22 +56,10 @@
         <span>{ordinalize(piano.inversion)} Inversion</span>
     {/if}
 
-    <button
-        class="hover:text-yellow-600 ml-auto" 
-        onclick={() => piano.locked = !piano.locked}
-    >
-        <span class="sr-only">{piano.locked ? "Unlock" : "Lock"} Piano</span>
-        {#if piano.locked}
-            <Lock />
-        {:else}
-            <LockOpen />
-        {/if}
-    </button>
-
 
     {#if rack.pianos.length > 1}
         <button 
-            class="hover:text-yellow-600" 
+            class="hover:text-yellow-600 ml-auto" 
             onclick={() => rack.remove_piano(piano)}
         >
             <span class="sr-only">Delete Piano</span>

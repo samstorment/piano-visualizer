@@ -20,23 +20,11 @@
     let scales_open = $state(true);
 
     function display_change(display_id: DisplayId) {
-        if (piano.locked) {
-            const notes = get_display_notes(piano.selected_note, display_id);
-            notes.forEach(n => play_note(n));
-            return;
-        }
-
         piano.display_id = display_id;
         piano.play_highlighted_notes();
     }
 
     function inversion_click(inversion: number) {
-        if (piano.locked) {
-            const notes = get_display_notes(piano.selected_note, piano.display_id);
-            get_inversions(notes)[inversion]?.forEach(n => play_note(n));
-            return;
-        }
-
         piano.inversion = inversion;
         piano.play_highlighted_notes();
     }
