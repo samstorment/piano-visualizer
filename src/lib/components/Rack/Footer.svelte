@@ -58,8 +58,8 @@
 
 
 
-    <label class="border rounded-l border-zinc-500 overflow-hidden bg-zinc-200">
-        <span class=" px-2">Key Size</span>
+    <label class="border rounded-l border-zinc-500 overflow-hidden bg-zinc-200 flex shrink-0">
+        <span class="px-2 text-nowrap">Key Size</span>
         <input type="number" min="70" max="300" bind:value={rack.key_size} class="border-l border-zinc-500 pl-2">
     </label>
 

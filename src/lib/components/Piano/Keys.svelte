@@ -82,7 +82,7 @@
             {@const black = is_accidental(n)}
             <button 
                 onclick={() => handleNoteClick(n)}
-                class="key white border border-zinc-800 flex items-end justify-center shrink-0 pb-2 px-1 rounded-b-lg shadow-md"
+                class="key border border-zinc-800 flex items-end justify-center shrink-0 rounded-b-lg shadow-md"
                 class:highlighted={piano.highlighted_notes.includes(n)}
                 class:white
                 class:black
@@ -104,24 +104,24 @@
         position: relative;
         isolation: isolate;
 
-        --height-white: 125px;
         --min-width-white: 35px;
-        --width-white: calc(var(--height-white) * (1/4));
+        --width-white: max(calc(var(--height-white) * (1/4)), var(--min-width-white));
 
         --height-black: calc(var(--height-white) * .65);
         --min-width-black: calc(var(--min-width-white) * .75);
 
+        font-size: max(calc(var(--width-white) * .45), 1rem);
     }
 
     .key {
         /* font-size: .9rem; */
-        font-size: max(calc(var(--width-white) * .45), 1rem);
 
         /* transition: scale ease-in-out 100ms, padding ease-in-out 100ms, font-size ease-in-out 100ms; */
         box-shadow: 0 5px 1px rgba(32,32,32,0.2);
+        padding-bottom: .25em;
 
         &:active {
-            font-size: max(calc(var(--width-white) * .35), .8rem);
+            font-size: .8em;
             box-shadow: none;
             scale: 1 1.03;
             padding-bottom: .75rem;

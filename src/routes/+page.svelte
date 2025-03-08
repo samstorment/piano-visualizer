@@ -19,27 +19,22 @@
         <TabBar bind:editor />
 
         <main class="flex-1 min-h-0">
-
-            {#if editor.tabs.length > 0}
-                {#each editor.tabs as tab, i}
-                    {#if tab.id === editor.active_tab_id}
-                        <div class="h-full overflow-auto">
-                            {#if tab.type === 'rack'}
-                                <RackComponent bind:rack={tab.rack} />
-                            {:else if tab.type === 'page'}
-                                {#if tab.page === 'about'}
-                                    <About />
-                                {:else if tab.page === 'presets'}
-                                    <Presets bind:editor />
-                                {:else if tab.page === 'settings'}
-                                    <Settings />
-                                {/if}
-                            {/if}  
-                        </div>
-                    {/if}
-                {/each}
-            {:else}
+            {#if !editor.active_tab}
                 <div class="p-4">Oh No! You closed all the tabs and I haven't implemented anything to handle that yet!</div>
+            {:else }
+                <div class="h-full overflow-auto">
+                    {#if editor.active_tab.type === 'rack'}
+                        <RackComponent bind:rack={editor.active_tab.rack} />
+                    {:else if editor.active_tab.type === 'page'}
+                        {#if editor.active_tab.page === 'about'}
+                            <About />
+                        {:else if editor.active_tab.page === 'presets'}
+                            <Presets bind:editor />
+                        {:else if editor.active_tab.page === 'settings'}
+                            <Settings />
+                        {/if}
+                    {/if}  
+                </div>
             {/if}
         </main>
     </div>
