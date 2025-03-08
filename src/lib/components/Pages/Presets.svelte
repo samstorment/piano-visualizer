@@ -13,8 +13,7 @@
         editor = $bindable()
     }: Props = $props();
 
-    const key_count: KeyCount = 49;
-    const alignment: RackAlignment = 'center';
+    const key_count: KeyCount = 88;
 
     function get_major_chord_rack(note: Note) {
 
@@ -27,11 +26,10 @@
                 return create_piano({ selected_note: note, display_id, key_count });
             });
 
-            return create_rack({ 
+        return create_rack({ 
             columns: 2, 
             key_count, 
             pianos, 
-            alignment, 
             context: { 
                 display_id: DisplayId.MAJOR_CHORD, 
                 note, 
@@ -54,7 +52,6 @@
             columns: 2, 
             key_count, 
             pianos, 
-            alignment, 
             context: { 
                 display_id: DisplayId.MINOR_CHORD, 
                 note, 

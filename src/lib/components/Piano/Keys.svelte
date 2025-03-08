@@ -54,11 +54,11 @@
         const lastNoteRect = last_note_element.getBoundingClientRect();
 
         // Check if first or last note are overflowing the container
-        if (lastNoteRect.right > containerRect.right || firstNoteRect.left < containerRect.left) {
-            // Scroll first note to be 20px from the left
-            const scrollLeft = keys_container_element.scrollLeft + (firstNoteRect.left - containerRect.left - firstNoteRect.width);            
+        // if (lastNoteRect.right > containerRect.right || firstNoteRect.left < containerRect.left) {
+            // Scroll first note to be half a key width from the left
+            const scrollLeft = keys_container_element.scrollLeft + (firstNoteRect.left - containerRect.left - firstNoteRect.width / 2);            
             keys_container_element.scrollTo({ left: scrollLeft, behavior: 'instant' });
-        }
+        // }
 
     }
 
