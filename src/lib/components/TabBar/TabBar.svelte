@@ -52,8 +52,9 @@
                     in:slide|global={{ axis: 'x', duration: 80 }} 
                     animate:flip={{ duration: 100 }}
                     onintroend={() => new_tab_id = tab.id}
+                    onanimationend={() => console.log('wow')}
                 >
-                    <TabButton {active} bind:editor bind:tab={editor.tabs[i]} />
+                    <TabButton {active} bind:editor bind:tab={editor.tabs[i]} index={i} />
                 </li>
             {/each}
         </ul>
@@ -68,3 +69,9 @@
         </button>
     </div>
 </header>
+
+<style>
+    ul {
+        scrollbar-width: none;
+    }
+</style>

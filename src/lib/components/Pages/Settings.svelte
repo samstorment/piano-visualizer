@@ -18,7 +18,11 @@ import { create_piano, key_counts } from "$lib/stores/piano.svelte";
 <div class="relative isolate h-full overflow-auto bg-zinc-50">
     <div class="max-w-screen-md mx-auto p-4 grid gap-2 grid-cols-2 sm:grid-cols-4">
 
-        <h2 class="text-xl font-bold mb-2 col-span-full">Piano Defaults</h2>
+        <hgroup class="col-span-full">
+            <h2 class="text-xl font-bold">Piano Defaults</h2>
+            
+            <p class=" text-zinc-500 text-sm">Default settings applied when you create a new tab.</p>
+        </hgroup>
 
         <div class="border border-zinc-300 bg-white p-2 backdrop-blur-sm rounded-md col-span-1">
             <h3 class="mb-2 font-bold text-nowrap">Key Count</h3>
@@ -76,6 +80,12 @@ import { create_piano, key_counts } from "$lib/stores/piano.svelte";
             </select>
         </div>
 
+        <div class="border border-zinc-300 bg-white p-2 backdrop-blur-sm rounded-md col-span-full">
+            <h3 class="mb-2 font-bold text-nowrap">Key Size <span class="text-sm text-zinc-600 font-normal">(Height {settings.piano.key_size} px)</span></h3>
+            
+            <input type="range" min="70" max="300" bind:value={settings.piano.key_size}>
+        </div>
+
         <div class="rounded-md p-2 border bg-white overflow-hidden relative isolate col-span-full">
             
             {@render grid()}
@@ -93,12 +103,6 @@ import { create_piano, key_counts } from "$lib/stores/piano.svelte";
                     <Keys bind:piano selected={false} stretch={settings.rack.alignment === 'stretch'} />
                 {/each}
             </div>
-        </div>
-
-        <div class="border border-zinc-300 bg-white p-2 backdrop-blur-sm rounded-md col-span-full">
-            <h3 class="mb-2 font-bold text-nowrap">Key Size <span class="text-sm text-zinc-600 font-normal">(Height {settings.piano.key_size} px)</span></h3>
-            
-            <input type="range" min="70" max="300" bind:value={settings.piano.key_size}>
         </div>
 
     </div>

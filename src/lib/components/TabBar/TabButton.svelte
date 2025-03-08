@@ -1,4 +1,11 @@
+<script module>
+    let drag_tab: Tab;
+    let drag_index: number;
+</script>
+
 <script lang="ts">
+	import { debounce, swap, throttle } from "$lib";
+
 	import type { Editor } from "$lib/stores/editor.svelte";
 	import type { Tab } from "$lib/stores/tab.svelte";
 	import { X } from "lucide-svelte";
@@ -7,12 +14,14 @@
     interface Props {
         active: Boolean,
         editor: Editor,
-        tab: Tab
+        tab: Tab,
+        index: number
     }
 
-    let { active, editor = $bindable(), tab = $bindable() }: Props = $props();
+    let { active, editor = $bindable(), tab = $bindable(), index }: Props = $props();
 
     let editing = $state(false);
+    let dragging = $state(false);
     let prev_title = $state(tab.title);
     let text_width = $state(100);
     let input_element: HTMLInputElement | undefined = $state(undefined);
@@ -23,6 +32,7 @@
         prev_title = tab.title;
         await tick();
         input_element?.focus();
+        input_element?.select();
     }
 
     async function end_edit() {
@@ -39,15 +49,43 @@
         input_element.style.width = `${width}px`;
     }
 
+    function drag_start(event: DragEvent) {
+        dragging = true;
+        editor.active_tab_id = tab.id;
+        drag_tab = tab;
+        drag_index = index;
+    }
+
+    const drag_enter = throttle(() => {
+
+        if (drag_tab.id === tab.id) return;
+
+        console.log(drag_tab.title, "enetered");
+
+        swap(editor.tabs, drag_index, index);
+        
+        drag_index = index;
+    })
+
+    function drag_end() {
+        dragging = false;
+    }
 </script>
 
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class={{ 
-    "group relative w-fit rounded": true,
-    "bg-white hover:bg-zinc-200": !active
-}}>
+        "group relative w-fit rounded": true,
+        "bg-white hover:bg-zinc-200": !active,
+    }}
+    class:dragging
+    draggable={true}
+    ondragstart={drag_start}
+    ondragover={drag_enter}
+    ondragend={drag_end}
+>
     <button 
         id="tab-button-{tab.id}"
-        onclick={() => { editor.active_tab_id = tab.id; }}
+        onclick={() => editor.active_tab_id = tab.id}
         ondblclick={begin_edit}
         class={{ 
             "px-2 py-1 rounded pr-8 w-full text-left text-nowrap relative text-sm overflow-hidden": true,
@@ -55,6 +93,7 @@
             "bg-white": active,
             "bg-yellow-500": active, 
         }}
+
     >
         {#if editing}
             <input 
@@ -70,7 +109,6 @@
                     }
                 }}
             >
-
             <span class="absolute invisible whitespace-pre -top-96 -left-96" bind:offsetWidth={text_width}>{tab.title}</span>
         {:else}
             <span bind:offsetWidth={text_width}>{tab.title}</span>
@@ -94,3 +132,16 @@
         <X class="w-4 h-4" />
     </button>
 </div>
+
+
+<style>
+    /* a lil hack to make it so the ghost image remains but 
+        the original tab is hidden during dragging. just
+        makes the drag look much smoother when the tab follows
+        the cursor
+    */
+    .dragging {
+        transition: 0.01s;
+        transform: translateX(-9999px);
+    }
+</style>

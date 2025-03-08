@@ -6,6 +6,17 @@ export const debounce = (fn: Function, ms = 300) => {
     };
 }
 
+export const throttle = (fn: Function, ms = 300) => {
+    let lastTime = 0;
+    return function (this: any, ...args: any[]) {
+        const now = Date.now();
+        if (now - lastTime >= ms) {
+            fn.apply(this, args);
+            lastTime = now;
+        }
+    };
+}
+
 export function ordinalize(num: number): string {
     const suffixes = ["th", "st", "nd", "rd"];
     const lastDigit = num % 10;
@@ -49,4 +60,11 @@ export function roman_numeral(num: number) {
     }
 
     return result;
+}
+
+
+export function swap<T>(array: Array<T>, i: number, j: number) {
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
 }
