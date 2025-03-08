@@ -3,8 +3,8 @@
 	import About from "$lib/components/Pages/About.svelte";
 	import Presets from "$lib/components/Pages/Presets.svelte";
 	import { Editor } from "$lib/stores/editor.svelte";
-	import IconBar from "../lib/components/IconBar/IconBar.svelte";
-	import TabBar from "./TabBar.svelte";
+	import IconBar from "$lib/components/IconBar/IconBar.svelte";
+	import TabBar from "$lib/components/TabBar/TabBar.svelte";
 	import Settings from "$lib/components/Pages/Settings.svelte";
 
     let editor = $state(new Editor());
